@@ -1,28 +1,25 @@
 // Paywall mockup: the screen that opens chapters 3-6 after the free part (steps 1-5).
-// Flow: step 6 shows names the shark already wrote (one clear, two locked) → the paywall
-// (one plan, yearly = 200 ₪ a month, 7 free days, accountant as an add-on) → the clearing
-// company's page (a stand-in) → the trial started, every name opens.
+// Flow: the paywall (one plan, monthly by default, yearly = 200 ₪ a month, 7 free days,
+// accountant as an add-on) → the clearing company's page (a stand-in) → the trial started.
 // "לא עכשיו" → home, where chapter 3 waits.
-// Link params: ?screen=taste|paywall|checkout|welcome|home, ?interval=year|month, ?user=m|f, ?embed = phone layout.
+// Link params: ?screen=paywall|checkout|welcome|home, ?interval=year|month, ?user=m|f, ?embed = phone layout.
 // Shift+D opens the developer notes and the screen list. "?" in the top bar = the shark's explanation.
 import { html, render, useState, useEffect, useRef, Icon, cx, confetti } from './lib.js';
 import { Logo, TopBar, BottomBar, Status, PrimaryButton, Button, Toast, PartnerBubble } from './components.js';
 import { USER, TRIAL_DAYS, PRICE, g } from './data.js';
 import { EXPLAIN, ExplainButton, SharkTalk } from './explain.js';
-import { Taste, Paywall, Checkout, Welcome, Home } from './screens.js';
+import { Paywall, Checkout, Welcome, Home } from './screens.js';
 import { DevPanel } from './devnotes.js';
 import { EMBED, IS_PHONE, readView, saveView, writeHandoff, takeHandoff, applyPhoneViewport, ViewToggle, PhonePreview } from './viewswitch.js';
 
 const params = new URLSearchParams(location.search);
-const SCREENS = ['taste', 'paywall', 'checkout', 'welcome', 'home'];
-const STEP6 = { name: 'שם ולוגו', chapterNo: 3, chapter: 'בניית מותג אישי', icon: 'palette' };
+const SCREENS = ['paywall', 'checkout', 'welcome', 'home'];
 const OPEN = { name: 'פתיחת הפרקים הבאים', chapterNo: 3, chapter: 'בניית מותג אישי', icon: 'lock-open' };
 
 const SHARK = {
-  taste: 'כתבתי שמות מהתוכנית שלך. אחד כבר כאן, השאר מחכים בפרק 3.',
   checkout: 'היום לא יורד כסף. תזכורת תגיע יום לפני החיוב.',
-  welcome: g('יאללה, בוחרים שם. איזה מהם מדבר אליך?', 'יאללה, בוחרים שם. איזה מהם מדבר אלייך?'),
-  home: 'השמות לעסק מחכים לך בפרק 3.',
+  welcome: 'הכל פתוח. ממשיכים מאיפה שעצרת, בפרק 3.',
+  home: `פרק 3 מחכה לך. ${TRIAL_DAYS} ימים חינם, בלי חיוב היום.`,
 };
 
 // The paywall line follows the billing choice: the core product's price in months of FlowBiz.
@@ -34,7 +31,7 @@ const paywallLine = (interval) => {
 
 function App({ view: shellView, onViewChange }) {
   const handoff = useRef(takeHandoff()).current;
-  const [screen, setScreen] = useState(() => handoff?.screen || (SCREENS.includes(params.get('screen')) ? params.get('screen') : 'taste'));
+  const [screen, setScreen] = useState(() => handoff?.screen || (SCREENS.includes(params.get('screen')) ? params.get('screen') : 'paywall'));
   const [plan, setPlan] = useState(() => handoff?.plan || { interval: params.get('interval') === 'year' ? 'year' : 'month', accountant: false });
   const [coupon, setCoupon] = useState(handoff?.coupon || null);
   const [toast, setToast] = useState(null);
@@ -117,11 +114,10 @@ function App({ view: shellView, onViewChange }) {
       <div class="flex items-center gap-2">${tools}</div>
     </header>`;
   } else {
-    top = html`<${TopBar} step=${screen === 'taste' ? STEP6 : OPEN} progress=${null} tools=${tools} onHome=${() => go('home')} />`;
+    top = html`<${TopBar} step=${OPEN} progress=${null} tools=${tools} onHome=${() => go('home')} />`;
   }
 
   const body = {
-    taste: html`<${Taste} />`,
     paywall: html`<${Paywall} plan=${plan} up=${up} onCoupon=${onCoupon} notify=${notify} />`,
     checkout: html`<${Checkout} plan=${plan} />`,
     welcome: html`<${Welcome} plan=${plan} coupon=${coupon} />`,
@@ -129,11 +125,6 @@ function App({ view: shellView, onViewChange }) {
   }[screen];
 
   const bottom = {
-    taste: html`<${BottomBar}
-      back=${html`<${Button} variant="secondary" onClick=${() => go('home')}>לדף הבית<//>`}
-      status=${html`<${Status} hint="עוד 2 שמות מחכים" />`}
-      primary=${html`<${PrimaryButton} label="לכל השמות" onClick=${() => go('paywall')} />`}
-    />`,
     paywall: html`<${BottomBar}
       back=${html`<${Button} variant="text" onClick=${() => (notify('אפשר לחזור מתי שרוצים. הניסיון מחכה', 'clock'), go('home'))}>לא עכשיו<//>`}
       status=${html`<${Status} hint=${html`<span><b class="text-money">היום 0 ₪</b> · ביטול בקליק</span>`} />`}
@@ -146,7 +137,7 @@ function App({ view: shellView, onViewChange }) {
     />`,
     welcome: html`<${BottomBar}
       extra=${html`<${Button} variant="text" onClick=${() => go('home')}><${Icon} name="house" size=${16} />לדף הבית<//>`}
-      primary=${html`<${PrimaryButton} label="לבחור שם" onClick=${() => notify('במערכת: ממשיכים בשלב 6, שם ולוגו', 'palette')} />`}
+      primary=${html`<${PrimaryButton} label="לפרק 3" onClick=${() => notify('במערכת: ממשיכים לפרק 3', 'arrow-left')} />`}
     />`,
     home: null,
   }[screen];

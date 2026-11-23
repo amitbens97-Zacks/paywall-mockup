@@ -1,12 +1,11 @@
 // The screens of the paywall mockup:
-//   taste    - step 6 "שם ולוגו": the shark already wrote names; one shows, two wait
 //   paywall  - one plan, yearly shown as 200 ₪ a month, 7 free days, accountant as an add-on
 //   checkout - stand-in for the clearing company's hosted page (CHING): save a card, 0 ₪ today
-//   welcome  - the trial started: every name opens, the dates of the trial
+//   welcome  - the trial started: the chapters are open, the dates of the trial
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
 import { Button, Mark, Note, Panel, How, CalcLines, SharkAvatar } from './components.js';
-import { g, USER, NAMES, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, UNLOCK_STEPS, yearSaving, couplesForGoal, DEMO_COUPON } from './data.js';
+import { USER, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, UNLOCK_STEPS, yearSaving, couplesForGoal, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
 export function chargeOf(plan) {
@@ -21,27 +20,6 @@ function Heading({ eyebrow, title, sub }) {
     <span class="fb-eyebrow">${eyebrow}</span>
     <h1 class="fb-h1 text-[28px] md:text-[36px]">${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
     ${sub && html`<p>${sub}</p>`}
-  </div>`;
-}
-
-// ---------- taste: step 6, before the paywall ----------
-
-function NameCard({ n, locked, i = 0 }) {
-  return html`<div class=${cx('rise relative overflow-hidden rounded-2xl border-[1.5px] bg-white px-4 py-3.5', locked ? 'border-line' : 'border-brand-300')} style=${{ animationDelay: `${i * 90}ms` }}>
-    <div class=${cx(locked && 'select-none blur-[7px]')} aria-hidden=${locked}>
-      <p class="font-display text-[24px] font-extrabold text-ink">${n.name}</p>
-      <p class="text-[14px] text-muted">${n.why}</p>
-    </div>
-    ${locked && html`<div class="absolute inset-0 flex items-center justify-center gap-1.5 bg-white/30 text-[14px] font-bold text-brand-700"><${Icon} name="lock-keyhole" size=${16} />נפתח עם פרק 3</div>`}
-  </div>`;
-}
-
-export function Taste() {
-  return html`<div class="mx-auto max-w-3xl px-4 py-6 md:px-7 md:py-10">
-    <${Heading} eyebrow="שלב 6 · שם ולוגו" title=${['כתבתי לך ', '3 שמות', ' לעסק']} sub=${`מהתוכנית שלך: ${USER.kind}, ${USER.core.name}.`} />
-    <div class="grid gap-3 sm:grid-cols-3">
-      ${NAMES.map((n, i) => html`<${NameCard} key=${n.name} n=${n} locked=${i > 0} i=${i} />`)}
-    </div>
   </div>`;
 }
 
@@ -251,6 +229,17 @@ export function Checkout({ plan }) {
 
 // ---------- welcome: the trial started ----------
 
+// The four chapters, now open.
+function OpenChapters() {
+  return html`<ul class="grid gap-2 sm:grid-cols-2">
+    ${UNLOCKS.map((c, i) => html`<li key=${c.n} class="rise flex items-center gap-3 rounded-2xl border-[1.5px] border-brand-300 bg-white px-4 py-3" style=${{ animationDelay: `${i * 80}ms` }}>
+      <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
+      <span class="min-w-0 flex-1"><b class="block text-[16px]">${c.title}</b><span class="text-[13px] text-muted">פרק ${c.n} · ${c.steps.length} שלבים</span></span>
+      <${PencilCheck} size=${20} color="#0038b8" delay=${i * 80} />
+    </li>`)}
+  </ul>`;
+}
+
 export function Welcome({ plan, coupon }) {
   return html`<div class="mx-auto max-w-3xl px-4 py-6 md:px-7 md:py-10">
     <${Heading}
@@ -258,9 +247,7 @@ export function Welcome({ plan, coupon }) {
       title=${coupon ? ['פרקים 3 עד 6 ', 'פתוחים', ''] : [`${TRIAL_DAYS} הימים שלך `, 'התחילו', '']}
       sub=${coupon ? 'הקוד פתח את המסלול. אין חיוב.' : `החיוב הראשון ב-${TRIAL.charge}, ותזכורת יום לפני.`}
     />
-    <div class="grid gap-3 sm:grid-cols-3">
-      ${NAMES.map((n, i) => html`<${NameCard} key=${n.name} n=${n} i=${i} />`)}
-    </div>
+    <${OpenChapters} />
     ${!coupon && html`<div class="mt-6 max-w-md"><${Timeline} plan=${plan} started /></div>`}
   </div>`;
 }
@@ -273,10 +260,10 @@ export function Home({ onOpen, notify }) {
     <div class="grid gap-4 md:grid-cols-[minmax(0,1fr)_280px]">
       <${Panel}>
         <span class="fb-eyebrow">פרק 3 · בניית מותג אישי</span>
-        <p class="mt-1 font-display text-[22px] font-extrabold">השמות לעסק מחכים לך</p>
-        <div class="mt-3 grid gap-2 sm:grid-cols-3">
-          ${NAMES.map((n, i) => html`<${NameCard} key=${n.name} n=${n} locked=${i > 0} i=${i} />`)}
-        </div>
+        <p class="mt-1 font-display text-[22px] font-extrabold">הפרקים הבאים מחכים לך</p>
+        <ul class="mt-3 grid gap-2 sm:grid-cols-2">
+          ${UNLOCKS[0].steps.map((s) => html`<li key=${s} class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[15px] ring-1 ring-line"><${Icon} name="lock-keyhole" size=${15} class="text-muted" />${s}</li>`)}
+        </ul>
         <div class="mt-4 flex flex-wrap items-center gap-3">
           <${Button} onClick=${onOpen}>להתחיל ${TRIAL_DAYS} ימים חינם<${Icon} name="arrow-left" size=${18} /><//>
           <span class="text-[14px] text-muted">היום 0 ₪ · ביטול בקליק</span>
