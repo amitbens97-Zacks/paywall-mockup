@@ -1,5 +1,5 @@
 // The screens of the paywall mockup:
-//   paywall  - one plan, yearly shown as 200 ₪ a month, 7 free days, accountant as an add-on
+//   paywall  - one plan, yearly shown as 200 ₪ a month, 5 free days, accountant as an add-on
 //   checkout - stand-in for the clearing company's hosted page (CHING): save a card, 0 ₪ today
 //   welcome  - the trial started: the chapters are open, the dates of the trial
 //   home     - after "לא עכשיו": chapter 3 waits on the home page

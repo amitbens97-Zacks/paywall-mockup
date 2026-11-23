@@ -39,9 +39,9 @@ export const USER = {
 export const couplesForGoal = Math.ceil(USER.goal / USER.core.price); // 12,000 / 4,800 = 2.5 → 3
 
 // Prices (Amit, 23.11.2026): monthly 350 ₪, yearly shown as 200 ₪ a month (2,400 ₪ a year).
-// 7 free days for every new subscriber. The accountant add-on keeps today's gap
+// 5 free days for every new subscriber (Amit, 23.11: 7 → 5). The accountant add-on keeps today's gap
 // (500 - 350 = 150 ₪ a month) and today's one-time 249 ₪ for opening the files.
-export const TRIAL_DAYS = 7;
+export const TRIAL_DAYS = 5;
 export const PRICE = {
   month: { perMonth: 350, charge: 350, label: 'חודשי' },
   year: { perMonth: 200, charge: 2400, label: 'שנתי' },
@@ -76,7 +76,7 @@ export const DEMO_COUPON = 'FLOW100';
 
 // Messages after "לא עכשיו" (shown in the developer notes and on the home card).
 export const NUDGES = [
-  { when: 'למחרת', text: 'הפרקים הבאים מחכים לך. 7 ימים חינם, בלי חיוב היום.' },
+  { when: 'למחרת', text: 'הפרקים הבאים מחכים לך. 5 ימים חינם, בלי חיוב היום.' },
   { when: 'אחרי 3 ימים', text: 'זוג אחד שסוגר תהליך מכסה שנתיים של FlowBiz. פרק 3 מחכה לך.' },
-  { when: 'אחרי 7 ימים', text: 'התוכנית העסקית שלך מוכנה כבר שבוע. רוצה להמשיך מהשם והלוגו?' },
+  { when: 'אחרי 7 ימים', text: 'התוכנית העסקית שלך מוכנה כבר שבוע. רוצה להמשיך לפרק 3?' },
 ];

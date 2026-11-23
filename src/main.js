@@ -1,5 +1,5 @@
 // Paywall mockup: the screen that opens chapters 3-6 after the free part (steps 1-5).
-// Flow: the paywall (one plan, monthly by default, yearly = 200 ₪ a month, 7 free days,
+// Flow: the paywall (one plan, monthly by default, yearly = 200 ₪ a month, 5 free days,
 // accountant as an add-on) → the clearing company's page (a stand-in) → the trial started.
 // "לא עכשיו" → home, where chapter 3 waits.
 // Link params: ?screen=paywall|checkout|welcome|home, ?interval=year|month, ?user=m|f, ?embed = phone layout.
@@ -83,7 +83,7 @@ function App({ view: shellView, onViewChange }) {
     setDev(false);
     setScreen(s);
   };
-  // "להתחיל 7 ימים חינם": one click to the clearing page (a short wait, as the redirect).
+  // "להתחיל 5 ימים חינם": one click to the clearing page (a short wait, as the redirect).
   const startTrial = () => {
     setBusy(true);
     setTimeout(() => (setBusy(false), go('checkout')), 700);
