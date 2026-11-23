@@ -35,7 +35,7 @@ const paywallLine = (interval) => {
 function App({ view: shellView, onViewChange }) {
   const handoff = useRef(takeHandoff()).current;
   const [screen, setScreen] = useState(() => handoff?.screen || (SCREENS.includes(params.get('screen')) ? params.get('screen') : 'taste'));
-  const [plan, setPlan] = useState(() => handoff?.plan || { interval: params.get('interval') === 'month' ? 'month' : 'year', accountant: false });
+  const [plan, setPlan] = useState(() => handoff?.plan || { interval: params.get('interval') === 'year' ? 'year' : 'month', accountant: false });
   const [coupon, setCoupon] = useState(handoff?.coupon || null);
   const [toast, setToast] = useState(null);
   const [dev, setDev] = useState(false);

@@ -66,8 +66,8 @@ function Facts() {
 
 function Billing({ interval, onChange }) {
   const opts = [
-    ['year', 'שנתי', `חוסך ${money(yearSaving)}`],
     ['month', 'חודשי', null],
+    ['year', 'שנתי', `חוסך ${money(yearSaving)}`],
   ];
   return html`<div role="radiogroup" aria-label="תקופת חיוב" class="inline-flex rounded-xl border border-line bg-canvas p-1">
     ${opts.map(([id, label, badge]) => html`<button key=${id} type="button" role="radio" aria-checked=${interval === id} onClick=${() => onChange(id)} class=${cx('flex h-10 items-center gap-2 rounded-[10px] px-4 text-[15px] font-bold cursor-pointer', interval === id ? 'bg-brand-600 text-white shadow-sm' : 'text-muted hover:text-brand-600')}>

@@ -22,7 +22,7 @@ const NOTES = [
   {
     title: 'מחירים וניסיון',
     items: [
-      `חודשי ${PRICE.month.perMonth} ₪. שנתי מוצג ${PRICE.year.perMonth} ₪ לחודש, ${PRICE.year.charge.toLocaleString('he-IL')} ₪ בחיוב אחד. ברירת המחדל: שנתי.`,
+      `חודשי ${PRICE.month.perMonth} ₪. שנתי מוצג ${PRICE.year.perMonth} ₪ לחודש, ${PRICE.year.charge.toLocaleString('he-IL')} ₪ בחיוב אחד. ברירת המחדל: חודשי.`,
       `${TRIAL_DAYS} ימים חינם לכל מנוי חדש. שומרים כרטיס, 0 ₪ היום, תזכורת יום לפני החיוב.`,
       'CHING: מנוי עם תקופת ניסיון. canAccessPaidStep כבר פותח גישה במצב trialing.',
       `רואה חשבון = תוספת בתיבת סימון: ${ACCOUNTANT.perMonth} ₪ לחודש ועוד ${ACCOUNTANT.setup} ₪ פעם אחת. במקום שני כרטיסי מסלול.`,
