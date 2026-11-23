@@ -82,27 +82,9 @@ function PlanCard({ plan, up }) {
         <li class="text-muted">ועוד ${money(ACCOUNTANT.setup)} פעם אחת, לפתיחת התיקים ברשויות</li>
       </ul>`}
     </div>
-    <div class="border-t border-line px-4 py-3 md:px-5"><${TrialStrip} plan=${plan} /></div>
   <//>`;
 }
 
-// The trial in one line inside the plan card: today 0 ₪, the reminder, the first charge.
-function TrialStrip({ plan }) {
-  const pts = [
-    ['lock-open', 'היום', '0 ₪', true],
-    ['bell', TRIAL.remind, 'תזכורת', false],
-    ['credit-card', TRIAL.charge, money(chargeOf(plan)), false],
-  ];
-  return html`<div class="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-    <b class="rounded-full bg-money-50 px-2.5 py-1 text-[14px] text-money">${TRIAL_DAYS} ימים חינם</b>
-    <ol class="flex w-full min-w-0 items-center justify-between gap-1.5 text-[13px] sm:w-auto sm:flex-1" aria-label="ימי הניסיון">
-      ${pts.map(([icon, when, what, first], i) => html`${i > 0 && html`<span key=${`s${i}`} class="h-px min-w-3 flex-1 bg-brand-200" aria-hidden="true"></span>`}<li key=${when} class="flex shrink-0 items-center gap-1.5">
-        <span class=${cx('grid h-7 w-7 place-items-center rounded-full', first ? 'bg-brand-600 text-white' : 'bg-brand-50 text-brand-600')}><${Icon} name=${icon} size=${14} /></span>
-        <span class="leading-tight"><b class="block">${when}</b><span class=${cx('tabular-nums', first ? 'font-bold text-money' : 'text-muted')}>${what}</span></span>
-      </li>`)}
-    </ol>
-  </div>`;
-}
 
 function Timeline({ plan, started }) {
   const pts = [
