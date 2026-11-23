@@ -150,10 +150,10 @@ function Unlocks() {
         <details class="group rounded-xl bg-white/80 ring-1 ring-line">
           <summary class="flex cursor-pointer list-none items-center gap-2.5 px-3 py-1.5">
             <span class="fb-chip-ic h-7 w-7 shrink-0"><${Icon} name=${c.icon} size=${15} /></span>
-            <span class="min-w-0 flex-1 truncate text-[15px]"><b>${c.title}</b> <span class="text-[13px] text-muted">· ${c.steps.length} שלבים</span></span>
+            <span class="min-w-0 flex-1 leading-tight"><b class="block truncate text-[15px]">${c.title}</b><span class="block truncate text-[13px] font-semibold text-brand-700">${c.gets}</span></span>
             <${Icon} name="chevron-down" size=${16} class="text-muted transition-transform group-open:rotate-180" />
           </summary>
-          <ul class="space-y-0.5 px-3 pb-2.5 ps-[52px] text-[14px]">${c.steps.map((s) => html`<li key=${s}>${s}</li>`)}</ul>
+          <ul class="space-y-0.5 px-3 pb-2.5 ps-[48px] text-[14px]">${c.steps.map((s) => html`<li key=${s.name} class="flex items-baseline gap-1.5"><${Icon} name="check" size=${13} class="shrink-0 text-brand-600" /><span><b>${s.gets}</b> <span class="text-muted">· ${s.name}</span></span></li>`)}</ul>
         </details>
       </li>`)}
     </ul>
@@ -234,7 +234,7 @@ function OpenChapters() {
   return html`<ul class="grid gap-2 sm:grid-cols-2">
     ${UNLOCKS.map((c, i) => html`<li key=${c.n} class="rise flex items-center gap-3 rounded-2xl border-[1.5px] border-brand-300 bg-white px-4 py-3" style=${{ animationDelay: `${i * 80}ms` }}>
       <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
-      <span class="min-w-0 flex-1"><b class="block text-[16px]">${c.title}</b><span class="text-[13px] text-muted">פרק ${c.n} · ${c.steps.length} שלבים</span></span>
+      <span class="min-w-0 flex-1"><b class="block text-[16px]">${c.title}</b><span class="text-[13px] font-semibold text-brand-700">${c.gets}</span></span>
       <${PencilCheck} size=${20} color="#0038b8" delay=${i * 80} />
     </li>`)}
   </ul>`;
@@ -262,7 +262,7 @@ export function Home({ onOpen, notify }) {
         <span class="fb-eyebrow">פרק 3 · בניית מותג אישי</span>
         <p class="mt-1 font-display text-[22px] font-extrabold">הפרקים הבאים מחכים לך</p>
         <ul class="mt-3 grid gap-2 sm:grid-cols-2">
-          ${UNLOCKS[0].steps.map((s) => html`<li key=${s} class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[15px] ring-1 ring-line"><${Icon} name="lock-keyhole" size=${15} class="text-muted" />${s}</li>`)}
+          ${UNLOCKS[0].steps.map((s) => html`<li key=${s.name} class="flex items-center gap-2 rounded-xl bg-white px-3 py-2 text-[15px] ring-1 ring-line"><${Icon} name="lock-keyhole" size=${15} class="shrink-0 text-muted" /><span class="min-w-0"><b>${s.gets}</b> <span class="text-[13px] text-muted">· ${s.name}</span></span></li>`)}
         </ul>
         <div class="mt-4 flex flex-wrap items-center gap-3">
           <${Button} onClick=${onOpen}>להתחיל ${TRIAL_DAYS} ימים חינם<${Icon} name="arrow-left" size=${18} /><//>

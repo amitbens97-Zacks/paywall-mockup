@@ -51,11 +51,26 @@ export const yearSaving = PRICE.month.perMonth * 12 - PRICE.year.charge; // 4,20
 export const yearSavingPct = Math.round((yearSaving / (PRICE.month.perMonth * 12)) * 100); // 43
 
 // What opens. Chapters 3-6 of the 15-step journey (journey v14, 03.11.2026).
+// gets: what the user walks away with, per chapter and per step (Amit 23.11: short and sharp).
 export const UNLOCKS = [
-  { n: 3, title: 'בניית מותג אישי', icon: 'palette', steps: ['שם ולוגו', 'דף המסרים', 'הצעה מנצחת', 'דף נחיתה'] },
-  { n: 4, title: 'מביאים לקוחות', icon: 'megaphone', steps: ['מכונת תוכן שיווקי', 'לקוחות משלמים'] },
-  { n: 5, title: 'מגדילים מכירות', icon: 'trending-up', steps: ['חדר התרגול', 'שירות לקוחות אוטומטי'] },
-  { n: 6, title: 'העסק שתמיד רצית', icon: 'users', steps: ['ניהול לקוחות', 'פגישת מיקוד על חשבון FlowBiz'] },
+  { n: 3, title: 'בניית מותג אישי', icon: 'palette', gets: 'מותג והצעה שמוכרים', steps: [
+    { name: 'שם ולוגו', gets: 'זהות לעסק' },
+    { name: 'דף המסרים', gets: 'מה להגיד ללקוח' },
+    { name: 'הצעה מנצחת', gets: 'הצעה שקשה לסרב לה' },
+    { name: 'דף נחיתה', gets: 'עמוד שמביא פניות' },
+  ] },
+  { n: 4, title: 'מביאים לקוחות', icon: 'megaphone', gets: 'הלקוחות המשלמים הראשונים', steps: [
+    { name: 'מכונת תוכן שיווקי', gets: 'פוסטים ופלייר מוכנים' },
+    { name: 'לקוחות משלמים', gets: 'פניות שהופכות ללקוחות' },
+  ] },
+  { n: 5, title: 'מגדילים מכירות', icon: 'trending-up', gets: 'יותר שיחות שנסגרות', steps: [
+    { name: 'חדר התרגול', gets: 'שיחת מכירה בביטחון' },
+    { name: 'שירות לקוחות אוטומטי', gets: 'מענה מיידי לכל פנייה' },
+  ] },
+  { n: 6, title: 'העסק שתמיד רצית', icon: 'users', gets: 'עסק שמנהל את עצמו', steps: [
+    { name: 'ניהול לקוחות', gets: 'כל הלקוחות במקום אחד' },
+    { name: 'פגישת מיקוד', gets: 'פגישה אישית, עלינו' },
+  ] },
 ];
 export const UNLOCK_STEPS = UNLOCKS.reduce((n, c) => n + c.steps.length, 0); // 10
 
