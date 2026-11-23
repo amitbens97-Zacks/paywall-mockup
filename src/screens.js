@@ -1,11 +1,11 @@
 // The screens of the paywall mockup:
-//   paywall  - one plan, yearly shown as 200 ₪ a month, 5 free days, accountant as an add-on
+//   paywall  - one card: plan, price, what opens, accountant add-on; 5 free days
 //   checkout - stand-in for the clearing company's hosted page (CHING): save a card, 0 ₪ today
 //   welcome  - the trial started: the chapters are open, the dates of the trial
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
-import { Button, Mark, Note, Panel, How, CalcLines, SharkAvatar } from './components.js';
-import { USER, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, UNLOCK_STEPS, yearSaving, couplesForGoal, DEMO_COUPON } from './data.js';
+import { Button, Mark, Panel, SharkAvatar } from './components.js';
+import { USER, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, yearSaving, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
 export function chargeOf(plan) {
@@ -13,7 +13,6 @@ export function chargeOf(plan) {
   const acc = plan.accountant ? (plan.interval === 'year' ? ACCOUNTANT.perMonth * 12 : ACCOUNTANT.perMonth) + ACCOUNTANT.setup : 0;
   return base + acc;
 }
-const roiMonths = (interval) => Math.floor(USER.core.price / PRICE[interval].perMonth);
 
 function Heading({ eyebrow, title, sub }) {
   return html`<div class="fb-heading mb-4">
@@ -24,56 +23,36 @@ function Heading({ eyebrow, title, sub }) {
 }
 
 // ---------- paywall ----------
-
-function Facts() {
-  const items = [
-    ['heart-handshake', USER.core.name.split(' · ')[0], money(USER.core.price)],
-    ['target', 'יעד בחודש', money(USER.goal)],
-    ['users', 'זוגות בחודש', `${couplesForGoal}`],
-  ];
-  return html`<div>
-    <div class="grid grid-cols-3 gap-2">
-      ${items.map(([icon, k, v]) => html`<div key=${k} class="min-w-0 rounded-xl bg-white/80 px-2.5 py-2 ring-1 ring-line">
-        <span class="flex items-center gap-1 text-[12px] font-semibold text-muted"><${Icon} name=${icon} size=${14} class="text-brand-600" /><span class="truncate">${k}</span></span>
-        <b class="block truncate font-display text-[16px] font-bold tabular-nums">${v}</b>
-      </div>`)}
-    </div>
-    <p class="mt-1 text-[12px] text-muted">מהתוכנית העסקית שלך</p>
-  </div>`;
-}
+// One card, read top to bottom: the plan, the price, what it opens, the accountant add-on.
+// The button sits in the fixed bottom bar. Nothing else on the page (Amit 23.11: as clean as possible).
 
 function Billing({ interval, onChange }) {
-  const opts = [
-    ['month', 'חודשי', null],
-    ['year', 'שנתי', `חוסך ${money(yearSaving)}`],
-  ];
-  return html`<div role="radiogroup" aria-label="תקופת חיוב" class="inline-flex rounded-xl border border-line bg-canvas p-1">
-    ${opts.map(([id, label, badge]) => html`<button key=${id} type="button" role="radio" aria-checked=${interval === id} onClick=${() => onChange(id)} class=${cx('flex h-10 items-center gap-2 rounded-[10px] px-4 text-[15px] font-bold cursor-pointer', interval === id ? 'bg-brand-600 text-white shadow-sm' : 'text-muted hover:text-brand-600')}>
-      ${label}${badge && html`<span class=${cx('rounded-full px-2 py-0.5 text-[12px] font-bold', interval === id ? 'bg-white/20 text-white' : 'bg-money-50 text-money')}>${badge}</span>`}
-    </button>`)}
+  return html`<div role="radiogroup" aria-label="תקופת חיוב" class="inline-flex shrink-0 rounded-xl border border-line bg-canvas p-1">
+    ${[['month', 'חודשי'], ['year', 'שנתי']].map(([id, label]) => html`<button key=${id} type="button" role="radio" aria-checked=${interval === id} onClick=${() => onChange(id)} class=${cx('h-9 rounded-[10px] px-4 text-[15px] font-bold cursor-pointer', interval === id ? 'bg-brand-600 text-white shadow-sm' : 'text-muted hover:text-brand-600')}>${label}</button>`)}
   </div>`;
 }
 
 function PlanCard({ plan, up }) {
   const p = PRICE[plan.interval];
+  const year = plan.interval === 'year';
   const [details, setDetails] = useState(false);
-  const accLine = plan.interval === 'year' ? `${money(ACCOUNTANT.perMonth)} לחודש · ${money(ACCOUNTANT.perMonth * 12)} בשנה` : `${money(ACCOUNTANT.perMonth)} לחודש`;
   return html`<${Panel} class="!p-0 overflow-hidden">
-    <div class="flex flex-wrap items-end justify-between gap-3 px-4 pb-3 pt-4 md:px-5">
-      <div class="min-w-0">
-        <p class="font-display text-[20px] font-extrabold">FlowBiz</p>
-        <p class="text-[14px] text-muted">${UNLOCK_STEPS} שלבים, עד הלקוח הראשון ומעבר לו</p>
+    <div class="px-5 pb-4 pt-5">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="font-display text-[20px] font-extrabold">מנוי FlowBiz</p>
+        <${Billing} interval=${plan.interval} onChange=${(interval) => up({ interval })} />
       </div>
-      <div class="text-end">
-        <p class="flex items-baseline justify-end gap-1.5"><b class="font-display text-[36px] font-black leading-none tabular-nums">${money(p.perMonth)}</b><span class="text-[15px] font-semibold text-muted">לחודש</span></p>
-        <p class="mt-1 text-[13px] text-muted">${plan.interval === 'year' ? `${money(p.charge)} בחיוב שנתי` : 'בחיוב חודשי'}</p>
-      </div>
+      <p class="mt-4 flex items-baseline gap-2"><b class="font-display text-[44px] font-black leading-none tabular-nums">${money(p.perMonth)}</b><span class="text-[16px] font-semibold text-muted">לחודש</span></p>
+      <p class="mt-1.5 text-[14px] text-muted">${year ? html`${money(p.charge)} בחיוב שנתי · <b class="text-money">חוסך ${money(yearSaving)}</b>` : 'חיוב חודשי'}</p>
     </div>
-    <div class="border-t border-line bg-canvas/60 px-4 py-3 md:px-5">
+    <ul class="space-y-2 border-t border-line px-5 py-4" aria-label="מה נפתח">
+      ${UNLOCKS.map((c) => html`<li key=${c.n} class="flex items-center gap-2.5 text-[16px]"><${Icon} name="check" size=${18} class="shrink-0 text-brand-600" /><span class="min-w-0"><b>${c.gets}</b> <span class="text-[14px] text-muted">· פרק ${c.n}</span></span></li>`)}
+    </ul>
+    <div class="border-t border-line bg-canvas/60 px-5 py-3">
       <div class="flex items-center gap-3">
         <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
           <input type="checkbox" checked=${plan.accountant} onChange=${(e) => up({ accountant: e.target.checked })} class="h-5 w-5 shrink-0 cursor-pointer accent-[#0038b8]" />
-          <span class="min-w-0 flex-1"><b class="text-[15px]">להוסיף רואה חשבון</b> <span class="text-[14px] text-muted">· ${accLine}</span></span>
+          <span class="min-w-0 text-[15px]"><b>להוסיף רואה חשבון</b> <span class="text-muted">· ${money(ACCOUNTANT.perMonth)} לחודש</span></span>
         </label>
         <button type="button" class="shrink-0 text-[13px] font-bold text-brand-600 hover:underline cursor-pointer" onClick=${() => setDetails(!details)} aria-expanded=${details}>פרטים</button>
       </div>
@@ -84,7 +63,6 @@ function PlanCard({ plan, up }) {
     </div>
   <//>`;
 }
-
 
 function Timeline({ plan, started }) {
   const pts = [
@@ -103,42 +81,6 @@ function Timeline({ plan, started }) {
         ${amount && html`<span class=${cx('text-[14px] font-bold tabular-nums', i === 0 ? 'text-money' : 'text-ink')}>${amount}</span>`}
       </li>`)}
     </ol>
-  </div>`;
-}
-
-function Roi({ interval }) {
-  const months = roiMonths(interval);
-  const years = Math.floor(months / 12);
-  const big = months % 12 === 0 && years >= 2 ? (years === 2 ? 'שנתיים של מנוי' : `${years} שנות מנוי`) : `${months} חודשי מנוי`;
-  return html`<${Note} tilt=${-1.5} class="max-w-sm">
-    <span class="fb-note-kicker">מה זה שווה לך</span>
-    <p class="mt-1 font-display text-[24px] font-black leading-tight">${USER.clientOne} = <span class="text-money">${big}</span></p>
-    <p class="mt-1 text-[15px]">${USER.clientOne} שסוגר ${USER.core.name.split(' · ')[0]} מכסה את FlowBiz ל-${months} חודשים.</p>
-    <${How} class="mt-1">
-      <${CalcLines} lines=${[
-        [USER.core.name, money(USER.core.price)],
-        [`FlowBiz, ${PRICE[interval].label}`, `${money(PRICE[interval].perMonth)} לחודש`],
-        ['מכסה', `${months} חודשים`, true],
-      ]} />
-    <//>
-  <//>`;
-}
-
-function Unlocks() {
-  return html`<div>
-    <h2 class="mb-2 text-[18px] font-bold">מה נפתח</h2>
-    <ul class="space-y-1.5">
-      ${UNLOCKS.map((c) => html`<li key=${c.n}>
-        <details class="group rounded-xl bg-white/80 ring-1 ring-line">
-          <summary class="flex cursor-pointer list-none items-center gap-2.5 px-3 py-1.5">
-            <span class="fb-chip-ic h-7 w-7 shrink-0"><${Icon} name=${c.icon} size=${15} /></span>
-            <span class="min-w-0 flex-1 leading-tight"><b class="block truncate text-[15px]">${c.title}</b><span class="block truncate text-[13px] font-semibold text-brand-700">${c.gets}</span></span>
-            <${Icon} name="chevron-down" size=${16} class="text-muted transition-transform group-open:rotate-180" />
-          </summary>
-          <ul class="space-y-0.5 px-3 pb-2.5 ps-[48px] text-[14px]">${c.steps.map((s) => html`<li key=${s.name} class="flex items-baseline gap-1.5"><${Icon} name="check" size=${13} class="shrink-0 text-brand-600" /><span><b>${s.gets}</b> <span class="text-muted">· ${s.name}</span></span></li>`)}</ul>
-        </details>
-      </li>`)}
-    </ul>
   </div>`;
 }
 
@@ -166,23 +108,10 @@ function Legal({ notify }) {
 }
 
 export function Paywall({ plan, up, onCoupon, notify }) {
-  return html`<div class="mx-auto max-w-5xl px-4 py-5 md:px-7 md:py-7">
-    <div class="grid gap-6 md:grid-cols-[minmax(0,1fr)_320px] md:gap-8">
-      <section class="min-w-0 space-y-4">
-        <${Heading} eyebrow="פרקים 1 ו-2 הושלמו" title=${[`${USER.name}, התוכנית העסקית `, 'מוכנה']} sub="עכשיו בונים את המותג ומביאים את הזוגות הראשונים." />
-        <${Facts} />
-        <div class="md:hidden"><${Roi} interval=${plan.interval} /></div>
-        <div class="space-y-3">
-          <${Billing} interval=${plan.interval} onChange=${(interval) => up({ interval })} />
-          <${PlanCard} plan=${plan} up=${up} />
-        </div>
-        <${Coupon} onValid=${onCoupon} />
-      </section>
-      <aside class="min-w-0 space-y-6 md:pt-14">
-        <div class="max-md:hidden"><${Roi} interval=${plan.interval} /></div>
-        <${Unlocks} />
-      </aside>
-    </div>
+  return html`<div class="mx-auto max-w-xl px-4 py-5 md:py-8">
+    <${Heading} eyebrow="סיימת את החלק החינמי" title=${['ממשיכים עם ', 'מנוי', '']} sub=${`${TRIAL_DAYS} ימים חינם, וביטול בקליק בכל רגע.`} />
+    <${PlanCard} plan=${plan} up=${up} />
+    <div class="mt-3 flex justify-center"><${Coupon} onValid=${onCoupon} /></div>
     <${Legal} notify=${notify} />
   </div>`;
 }

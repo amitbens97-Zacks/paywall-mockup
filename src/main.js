@@ -127,7 +127,7 @@ function App({ view: shellView, onViewChange }) {
   const bottom = {
     paywall: html`<${BottomBar}
       back=${html`<${Button} variant="text" onClick=${() => (notify('אפשר לחזור מתי שרוצים. הניסיון מחכה', 'clock'), go('home'))}>לא עכשיו<//>`}
-      status=${html`<${Status} hint=${html`<span><b class="text-money">היום 0 ₪</b> · ביטול בקליק</span>`} />`}
+      status=${html`<${Status} hint=${html`<b class="text-money">היום 0 ₪</b>`} />`}
       primary=${html`<${Button} onClick=${startTrial} disabled=${busy}>${busy ? 'מעבירים לתשלום...' : `להתחיל ${TRIAL_DAYS} ימים חינם`}<${Icon} name="arrow-left" size=${20} /><//>`}
     />`,
     checkout: html`<${BottomBar}
