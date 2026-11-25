@@ -5,6 +5,7 @@
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
 import { Button, Mark, Note, Panel, SharkAvatar } from './components.js';
+import { Drawing, FunnelShape, Ring, Tally, Trail } from './illus.js';
 import { USER, NUMBERS, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, yearSaving, perMonthOf, onceOf, roiMonths, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
@@ -65,46 +66,57 @@ function PlanCard({ plan, up }) {
   <//>`;
 }
 
-// What opens: one outcome per chapter, two by two (a list on the phone). A tap shows its steps
-// under the row; one open at a time. grid-flow-dense keeps the neighbour in its place.
-function Unlocks() {
-  const [open, setOpen] = useState(null);
-  return html`<p class="text-[13px] font-bold text-muted">מה נפתח</p>
-    <ul class="mt-1 grid lg:grid-flow-dense lg:grid-cols-2 lg:gap-x-8" aria-label="מה נפתח">
-    ${UNLOCKS.map((c) => {
-      const on = open === c.n;
-      return html`<li key=${c.n} class="min-w-0">
-          <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class="group flex w-full items-center gap-2.5 py-1 text-start md:py-2 cursor-pointer">
-            <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
-            <b class="min-w-0 text-[16px] leading-tight group-hover:text-brand-600">${c.gets}</b>
-            <${Icon} name="chevron-down" size=${16} class=${cx('shrink-0 text-muted transition-transform ms-auto', on && 'rotate-180')} />
-          </button>
-        </li>
-        ${on && html`<li key=${`${c.n}-steps`} class="rise lg:col-span-2">
-          <ul class="mb-1.5 grid gap-x-4 gap-y-0.5 rounded-xl bg-brand-50/70 px-3 py-2 text-[14px] leading-snug lg:grid-cols-2">${c.steps.map((x) => html`<li key=${x.name}><b>${x.gets}</b> <span class="text-muted">· ${x.name}</span></li>`)}</ul>
-        </li>`}`;
-    })}
-  </ul>`;
+// What opens: a drawn path of four stations, one outcome per chapter (a list on the phone).
+// A tap on a station shows its steps under the path; one open at a time.
+function Steps({ c }) {
+  return html`<ul class="grid gap-x-5 gap-y-1 rounded-xl bg-brand-50 px-4 py-2.5 text-[14px] leading-snug md:grid-cols-2">${c.steps.map((x) => html`<li key=${x.name}><b>${x.gets}</b> <span class="text-muted">· ${x.name}</span></li>`)}</ul>`;
 }
 
-// The summary of step 5, written like a sum: the goal, what it takes, and at the bottom what one deal
-// (the user's core product) is worth, in months of the chosen plan.
+function Unlocks() {
+  const [open, setOpen] = useState(null);
+  const cur = UNLOCKS.find((c) => c.n === open);
+  return html`<p class="text-[14px] font-bold text-muted">מה נפתח</p>
+    <ol class="relative mt-1 grid md:grid-cols-4" aria-label="מה נפתח">
+      ${UNLOCKS.map((c, i) => {
+        const on = open === c.n;
+        const last = i === UNLOCKS.length - 1;
+        return html`<li key=${c.n} class="relative min-w-0">
+          ${!last && html`<${Trail} down=${i % 2 === 1} class="pointer-events-none absolute top-[30px] end-0 hidden h-5 w-[calc(100%-92px)] translate-x-[-50%] lg:block" />`}
+          ${!last && !on && html`<span class="absolute bottom-0 start-[23px] h-3 translate-y-1/2 border-s-2 border-dotted border-brand-300 md:hidden" aria-hidden="true"></span>`}
+          <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class=${cx('group flex w-full cursor-pointer items-center gap-3 rounded-2xl text-start max-md:h-[46px] md:flex-col md:gap-1 md:px-1.5 md:pb-1 md:pt-1 md:text-center')}>
+            <${Drawing} name=${c.drawing} class="h-[42px] w-[46px] shrink-0 transition-transform group-hover:-rotate-3 group-hover:scale-105 md:h-[72px] md:w-[80px]" />
+            <b class=${cx('min-w-0 flex-1 text-[16px] leading-tight [text-wrap:balance] group-hover:text-brand-600 md:min-h-10', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${14} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform group-hover:text-brand-600 max-md:hidden', on && 'rotate-180')} /></b>
+            <${Icon} name="chevron-down" size=${15} class=${cx('shrink-0 text-muted transition-transform md:hidden', on && 'rotate-180')} />
+          </button>
+          ${on && html`<div class="rise my-1.5 md:hidden"><${Steps} c=${c} /></div>`}
+        </li>`;
+      })}
+    </ol>
+    ${cur && html`<div key=${cur.n} class="rise mt-1 max-md:hidden"><${Steps} c=${cur} /></div>`}`;
+}
+
+// The summary of step 5 as a drawn funnel: inquiries, couples, the goal (all per month). Under it, what one
+// deal (the user's core product) is worth, in months of the chosen plan (one tally mark = one month).
 function Numbers({ plan }) {
   const m = roiMonths(plan);
-  const facts = [
-    ['יעד בחודש', money(USER.goal)],
-    ['זוגות בחודש', NUMBERS.clients],
-    ['פניות בחודש', NUMBERS.leads],
+  const tiers = [
+    [NUMBERS.leads, 'פניות'],
+    [NUMBERS.clients, 'זוגות'],
+    [money(USER.goal), 'יעד'],
   ];
-  return html`<${Note} tilt=${-0.6} class="!px-6 !pb-5 !pt-7 flex flex-col md:h-full">
-    <span class="fb-note-kicker">העסק במספרים</span>
-    <dl class="mt-1">
-      ${facts.map(([k, v]) => html`<div key=${k} class="flex items-baseline justify-between gap-3 border-b border-[#0038b8]/15 py-2.5"><dt class="text-[15px]">${k}</dt><dd class="m-0 whitespace-nowrap font-display text-[21px] font-extrabold leading-tight tabular-nums">${v}</dd></div>`)}
-    </dl>
-    <div class="mt-auto pt-4">
-      <p class="text-[17px] font-bold">עסקה אחת שווה לך</p>
-      <p class="font-display text-[36px] font-black leading-tight tabular-nums text-money">${money(USER.core.price)}</p>
-      <p class="text-[16px] font-semibold">מכסה ${m === 24 ? 'שנתיים' : `${m} חודשים`} של מנוי</p>
+  return html`<${Note} tilt=${-0.6} class="!px-6 !pb-4 !pt-8 flex flex-col md:h-full">
+    <p class="flex items-baseline justify-between"><b class="font-display text-[18px] font-extrabold leading-tight">העסק במספרים</b><span class="text-[14px] text-ink-2">בחודש</span></p>
+    <div class="relative mx-auto mt-2 h-[124px] w-full max-w-[280px]">
+      <${FunnelShape} class="absolute inset-0 h-full w-full" />
+      <dl class="relative m-0 flex h-full flex-col justify-between py-[3px]">
+        ${tiers.map(([v, k], i) => html`<div key=${k} class=${cx('flex h-9 items-center justify-center gap-1.5', i === 2 && 'text-white')}><dt class=${cx('text-[15px]', i < 2 && 'order-2')}>${k}</dt><dd class="m-0 font-display text-[20px] font-extrabold leading-none tabular-nums">${v}</dd></div>`)}
+      </dl>
+    </div>
+    <div class="mt-auto pt-3 text-center">
+      <p class="text-[17px] font-bold leading-tight">עסקה אחת שווה לך</p>
+      <p class="relative mx-auto mt-1 w-fit px-6 py-1.5 font-display text-[36px] font-black leading-none tabular-nums text-money"><${Ring} class="absolute inset-0 h-full w-full" />${money(USER.core.price)}</p>
+      <p class="mt-1.5 text-[16px] font-semibold leading-tight">מכסה ${m === 24 ? 'שנתיים' : `${m} חודשים`} של מנוי</p>
+      ${m <= 24 && html`<${Tally} n=${m} class="mx-auto mt-1.5 block" />`}
     </div>
   <//>`;
 }
