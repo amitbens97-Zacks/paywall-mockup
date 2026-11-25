@@ -1,5 +1,5 @@
 // The screens of the paywall mockup:
-//   paywall  - two light columns: the plan and its price, next to what opens and what one sale covers; 5 free days
+//   paywall  - one plan card (price, what opens, accountant) with the "העסק במספרים" note on its left; 5 free days
 //   checkout - stand-in for the clearing company's hosted page (CHING): save a card, 0 ₪ today
 //   welcome  - the trial started: the chapters are open, the dates of the trial
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
@@ -23,10 +23,9 @@ function Heading({ eyebrow, title, sub }) {
 }
 
 // ---------- paywall ----------
-// The plan card (toggle, price, accountant add-on) sits above the button of the fixed bottom bar.
-// Next to it: the summary of "העסק במספרים" with what one deal is worth. Under both: the four outcomes
-// (a tap shows the steps).
-// On the phone the plan comes first.
+// Right: one card with the whole offer, top to bottom: price, what opens, accountant add-on.
+// Left, same height: the note with the summary of "העסק במספרים" and what one deal is worth.
+// Under both, one quiet line: the code and the legal links. On the phone the plan comes first.
 
 function Billing({ interval, onChange }) {
   return html`<div role="radiogroup" aria-label="תקופת חיוב" class="inline-flex shrink-0 rounded-xl border border-line bg-canvas p-1">
@@ -37,53 +36,59 @@ function Billing({ interval, onChange }) {
 function PlanCard({ plan, up }) {
   const year = plan.interval === 'year';
   const [details, setDetails] = useState(false);
-  const billing = year ? `${money(perMonthOf(plan) * 12)} בחיוב שנתי` : 'חיוב חודשי';
-  return html`<${Panel} class="!p-0 overflow-hidden">
-    <div class="px-5 pb-4 pt-5">
+  return html`<${Panel} class="!p-0 flex flex-col overflow-hidden md:h-full">
+    <div class="px-5 pb-3 pt-4 md:px-6 md:pb-4">
       <div class="flex flex-wrap items-center justify-between gap-3">
         <p class="font-display text-[20px] font-extrabold">מנוי FlowBiz</p>
         <${Billing} interval=${plan.interval} onChange=${(interval) => up({ interval })} />
       </div>
-      <p class="mt-4 flex items-baseline gap-2"><b class="font-display text-[52px] font-black leading-none tabular-nums">${money(perMonthOf(plan))}</b><span class="text-[17px] font-semibold text-muted">לחודש</span></p>
-      <p class="mt-2 text-[14px] text-muted">${billing}${year && html` · <b class="text-money">חיסכון של ${money(yearSaving)}</b>`}</p>
-      ${plan.accountant && html`<p class="rise text-[14px] text-muted">כולל רואה חשבון · ועוד ${money(onceOf(plan))} פעם אחת</p>`}
+      <div class="mt-2 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
+        <b class="font-display text-[60px] font-black leading-none tabular-nums">${money(perMonthOf(plan))}</b>
+        <span class="text-[18px] font-semibold text-muted">לחודש</span>
+        <span class="text-[14px] text-muted max-md:basis-full md:ms-auto">${year ? html`${money(perMonthOf(plan) * 12)} בחיוב שנתי · <b class="text-money">חיסכון של ${money(yearSaving)}</b>` : 'חיוב חודשי'}</span>
+      </div>
     </div>
-    <div class="border-t border-line bg-canvas/60 px-5 py-3">
+    <div class="flex-1 border-t border-line px-5 pb-1.5 pt-2 md:px-6 md:pb-2 md:pt-3"><${Unlocks} /></div>
+    <div class="border-t border-line bg-canvas/60 px-5 py-3 md:px-6">
       <div class="flex items-center gap-3">
         <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
           <input type="checkbox" checked=${plan.accountant} onChange=${(e) => up({ accountant: e.target.checked })} class="h-5 w-5 shrink-0 cursor-pointer accent-[#0038b8]" />
-          <span class="min-w-0 text-[15px]"><b>להוסיף רואה חשבון</b> <span class="whitespace-nowrap text-muted">· ${money(ACCOUNTANT.perMonth)} לחודש</span></span>
+          <span class="min-w-0 text-[15px]"><b>להוסיף רואה חשבון</b> <span class="text-muted"><span class="whitespace-nowrap">· ${money(ACCOUNTANT.perMonth)} לחודש</span>${plan.accountant && html` <span class="whitespace-nowrap">ועוד ${money(onceOf(plan))} פעם אחת</span>`}</span></span>
         </label>
         <button type="button" class="shrink-0 text-[13px] font-bold text-brand-600 hover:underline cursor-pointer" onClick=${() => setDetails(!details)} aria-expanded=${details}>פרטים</button>
       </div>
       ${details && html`<ul class="rise mt-2 space-y-1 ps-8 text-[14px]">
         ${ACCOUNTANT_ITEMS.map((t) => html`<li key=${t} class="flex items-center gap-1.5"><${Icon} name="check" size=${14} class="text-brand-600" />${t}</li>`)}
-        <li class="text-muted">ועוד ${money(ACCOUNTANT.setup)} פעם אחת, לפתיחת התיקים ברשויות</li>
+        ${!plan.accountant && html`<li class="text-muted">ועוד ${money(ACCOUNTANT.setup)} פעם אחת, לפתיחת התיקים ברשויות</li>`}
       </ul>`}
     </div>
   <//>`;
 }
 
-// What opens: one outcome per chapter. A tap shows its steps; one open at a time.
-// Desktop: one row of four under the numbers and the plan. Phone: a list.
+// What opens: one outcome per chapter, two by two (a list on the phone). A tap shows its steps
+// under the row; one open at a time. grid-flow-dense keeps the neighbour in its place.
 function Unlocks() {
   const [open, setOpen] = useState(null);
-  return html`<ul class="grid border-t border-line max-md:divide-y max-md:divide-line md:grid-cols-4 md:gap-x-5" aria-label="מה נפתח">
+  return html`<p class="text-[13px] font-bold text-muted">מה נפתח</p>
+    <ul class="mt-1 grid lg:grid-flow-dense lg:grid-cols-2 lg:gap-x-8" aria-label="מה נפתח">
     ${UNLOCKS.map((c) => {
       const on = open === c.n;
       return html`<li key=${c.n} class="min-w-0">
-        <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class="group flex w-full items-center gap-2.5 py-2.5 text-start cursor-pointer">
-          <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
-          <span class="min-w-0 flex-1"><small class="block text-[12px] leading-tight text-muted">פרק ${c.n}</small><b class="block text-[15px] leading-tight group-hover:text-brand-600">${c.gets}</b></span>
-          <${Icon} name="chevron-down" size=${16} class=${cx('shrink-0 text-muted transition-transform', on && 'rotate-180')} />
-        </button>
-        ${on && html`<ul class="rise space-y-0.5 pb-2.5 ps-[46px] text-[14px] leading-snug">${c.steps.map((x) => html`<li key=${x.name}><b>${x.gets}</b> <span class="text-muted">· ${x.name}</span></li>`)}</ul>`}
-      </li>`;
+          <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class="group flex w-full items-center gap-2.5 py-1 text-start md:py-2 cursor-pointer">
+            <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
+            <b class="min-w-0 text-[16px] leading-tight group-hover:text-brand-600">${c.gets}</b>
+            <${Icon} name="chevron-down" size=${16} class=${cx('shrink-0 text-muted transition-transform ms-auto', on && 'rotate-180')} />
+          </button>
+        </li>
+        ${on && html`<li key=${`${c.n}-steps`} class="rise lg:col-span-2">
+          <ul class="mb-1.5 grid gap-x-4 gap-y-0.5 rounded-xl bg-brand-50/70 px-3 py-2 text-[14px] leading-snug lg:grid-cols-2">${c.steps.map((x) => html`<li key=${x.name}><b>${x.gets}</b> <span class="text-muted">· ${x.name}</span></li>`)}</ul>
+        </li>`}`;
     })}
   </ul>`;
 }
 
-// The summary of step 5 and what one deal (the user's core product) is worth, in months of the chosen plan.
+// The summary of step 5, written like a sum: the goal, what it takes, and at the bottom what one deal
+// (the user's core product) is worth, in months of the chosen plan.
 function Numbers({ plan }) {
   const m = roiMonths(plan);
   const facts = [
@@ -91,14 +96,15 @@ function Numbers({ plan }) {
     ['זוגות בחודש', NUMBERS.clients],
     ['פניות בחודש', NUMBERS.leads],
   ];
-  return html`<${Note} tilt=${-0.6} class="!px-5 !pb-4 !pt-5">
+  return html`<${Note} tilt=${-0.6} class="!px-6 !pb-5 !pt-7 flex flex-col md:h-full">
     <span class="fb-note-kicker">העסק במספרים</span>
-    <dl class="mt-1.5 grid grid-cols-[auto_auto_auto] justify-between gap-3">
-      ${facts.map(([k, v]) => html`<div key=${k} class="min-w-0"><dt class="text-[13px] text-muted">${k}</dt><dd class="m-0 whitespace-nowrap font-display text-[20px] font-extrabold leading-tight tabular-nums">${v}</dd></div>`)}
+    <dl class="mt-1">
+      ${facts.map(([k, v]) => html`<div key=${k} class="flex items-baseline justify-between gap-3 border-b border-[#0038b8]/15 py-2.5"><dt class="text-[15px]">${k}</dt><dd class="m-0 whitespace-nowrap font-display text-[21px] font-extrabold leading-tight tabular-nums">${v}</dd></div>`)}
     </dl>
-    <div class="mt-3 border-t border-brand-200 pt-2.5">
-      <p class="font-display text-[22px] font-black leading-tight">עסקה אחת שווה לך <span class="whitespace-nowrap text-money">${money(USER.core.price)}</span></p>
-      <p class="mt-0.5 text-[15px] font-semibold">מכסה ${m === 24 ? 'שנתיים' : `${m} חודשים`} של מנוי</p>
+    <div class="mt-auto pt-4">
+      <p class="text-[17px] font-bold">עסקה אחת שווה לך</p>
+      <p class="font-display text-[36px] font-black leading-tight tabular-nums text-money">${money(USER.core.price)}</p>
+      <p class="text-[16px] font-semibold">מכסה ${m === 24 ? 'שנתיים' : `${m} חודשים`} של מנוי</p>
     </div>
   <//>`;
 }
@@ -138,26 +144,26 @@ function Coupon({ onValid }) {
   </div>`;
 }
 
-function Legal({ notify }) {
+// One quiet line under the offer: the code on the right, the links on the left.
+function Foot({ onCoupon, notify }) {
   const links = ['תנאי שימוש', 'מדיניות פרטיות', 'הצהרת נגישות'];
-  return html`<footer class="mt-5 md:mt-3 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 border-t border-line pt-3 text-[13px] text-muted">
-    ${links.map((l) => html`<a key=${l} href="#" class="hover:text-brand-600 hover:underline" onClick=${(e) => (e.preventDefault(), notify(`במערכת: עמוד "${l}"`, 'file-text'))}>${l}</a>`)}
-    <a href="#" class="hover:text-brand-600 hover:underline" onClick=${(e) => (e.preventDefault(), notify('במערכת: כתובת תמיכה על הדומיין של FlowBiz', 'mail'))}>תמיכה</a>
+  return html`<footer class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[13px] text-muted max-md:flex-col md:mt-4">
+    <${Coupon} onValid=${onCoupon} />
+    <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+      ${links.map((l) => html`<a key=${l} href="#" class="hover:text-brand-600 hover:underline" onClick=${(e) => (e.preventDefault(), notify(`במערכת: עמוד "${l}"`, 'file-text'))}>${l}</a>`)}
+      <a href="#" class="hover:text-brand-600 hover:underline" onClick=${(e) => (e.preventDefault(), notify('במערכת: כתובת תמיכה על הדומיין של FlowBiz', 'mail'))}>תמיכה</a>
+    </nav>
   </footer>`;
 }
 
 export function Paywall({ plan, up, onCoupon, notify }) {
   return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-4 md:pt-5">
     <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, ממשיכים עם `, 'מנוי', '']} sub=${`${TRIAL_DAYS} ימים חינם, וביטול בקליק בכל רגע.`} />
-    <div class="grid gap-6 md:grid-cols-2 md:gap-12">
-      <section class="order-2 min-w-0 md:order-1 md:pt-3"><${Numbers} plan=${plan} /></section>
-      <section class="order-1 min-w-0 md:order-2">
-        <${PlanCard} plan=${plan} up=${up} />
-        <div class="mt-2.5 flex justify-center"><${Coupon} onValid=${onCoupon} /></div>
-      </section>
+    <div class="grid gap-7 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
+      <section class="min-w-0"><${PlanCard} plan=${plan} up=${up} /></section>
+      <section class="min-w-0"><${Numbers} plan=${plan} /></section>
     </div>
-    <div class="mt-5 md:mt-3"><${Unlocks} /></div>
-    <${Legal} notify=${notify} />
+    <${Foot} onCoupon=${onCoupon} notify=${notify} />
   </div>`;
 }
 
