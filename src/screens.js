@@ -5,7 +5,7 @@
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
 import { Button, Mark, Note, Panel, SharkAvatar } from './components.js';
-import { Drawing, FunnelShape, Ring, Tally, Trail } from './illus.js';
+import { Drawing, FunnelShape, Ring, Seal, Tally, Trail } from './illus.js';
 import { USER, NUMBERS, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, yearSaving, perMonthOf, onceOf, roiMonths, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
@@ -15,10 +15,10 @@ export function chargeOf(plan) {
   return base + acc;
 }
 
-function Heading({ eyebrow, title, sub }) {
+function Heading({ eyebrow, title, sub, big }) {
   return html`<div class="fb-heading mb-4">
     <span class="fb-eyebrow">${eyebrow}</span>
-    <h1 class="fb-h1 text-[28px] md:text-[36px]">${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
+    <h1 class=${cx('fb-h1', big ? 'text-[34px] md:text-[42px]' : 'text-[28px] md:text-[36px]')}>${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
     ${sub && html`<p>${sub}</p>`}
   </div>`;
 }
@@ -170,9 +170,12 @@ function Foot({ onCoupon, notify }) {
 
 export function Paywall({ plan, up, onCoupon, notify }) {
   return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-4 md:pt-5">
-    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, ממשיכים עם `, 'מנוי', '']} sub=${`${TRIAL_DAYS} ימים חינם, וביטול בקליק בכל רגע.`} />
+    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, `, `${TRIAL_DAYS} ימים חינם`, '']} sub="ואז ממשיכים עם מנוי. ביטול בקליק בכל רגע." big />
     <div class="grid gap-7 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
-      <section class="min-w-0"><${PlanCard} plan=${plan} up=${up} /></section>
+      <section class="relative min-w-0">
+        <${PlanCard} plan=${plan} up=${up} />
+        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -top-[54px] end-[190px] hidden h-[114px] w-[114px] -rotate-[8deg] lg:block" />
+      </section>
       <section class="min-w-0"><${Numbers} plan=${plan} /></section>
     </div>
     <${Foot} onCoupon=${onCoupon} notify=${notify} />
