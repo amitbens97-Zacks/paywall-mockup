@@ -15,11 +15,12 @@ export function chargeOf(plan) {
   return base + acc;
 }
 
-function Heading({ eyebrow, title, sub, big }) {
-  return html`<div class="fb-heading mb-4">
+function Heading({ eyebrow, title, sub, children }) {
+  return html`<div class=${cx('fb-heading mb-4', children && 'relative max-md:pe-[84px]')}>
     <span class="fb-eyebrow">${eyebrow}</span>
-    <h1 class=${cx('fb-h1', big ? 'text-[34px] md:text-[42px]' : 'text-[28px] md:text-[36px]')}>${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
+    <h1 class=${cx('fb-h1 md:text-[36px]', children ? 'text-[23px]' : 'text-[28px]')}>${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
     ${sub && html`<p>${sub}</p>`}
+    ${children}
   </div>`;
 }
 
@@ -170,11 +171,13 @@ function Foot({ onCoupon, notify }) {
 
 export function Paywall({ plan, up, onCoupon, notify }) {
   return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-4 md:pt-5">
-    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, `, `${TRIAL_DAYS} ימים חינם`, '']} sub="ואז ממשיכים עם מנוי. ביטול בקליק בכל רגע." big />
+    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, ממשיכים עם `, 'מנוי', '']} sub="ביטול בקליק בכל רגע.">
+      <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -end-1 top-1 h-[84px] w-[84px] -rotate-[8deg] md:end-[262px] md:-top-1 md:h-[100px] md:w-[100px] lg:hidden" />
+    <//>
     <div class="grid gap-7 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
       <section class="relative min-w-0">
         <${PlanCard} plan=${plan} up=${up} />
-        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -top-[54px] end-[190px] hidden h-[114px] w-[114px] -rotate-[8deg] lg:block" />
+        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -top-[34px] end-[188px] hidden h-[114px] w-[114px] -rotate-[8deg] lg:block" />
       </section>
       <section class="min-w-0"><${Numbers} plan=${plan} /></section>
     </div>

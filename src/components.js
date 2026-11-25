@@ -161,16 +161,15 @@ export function Status({ undo, onUndo, reason, save, hint }) {
   return html`<span></span>`;
 }
 
-// aside: one strong fact next to the primary (on the phone: above it).
-export function BottomBar({ back, extra, status, aside, primary }) {
+export function BottomBar({ back, extra, status, primary }) {
   return html`<div class="no-print pb-safe shrink-0 border-t border-line bg-surface">
     <div class="hidden h-20 grid-cols-[1fr_auto_1fr] items-center gap-4 px-7 md:grid">
       <div class="flex items-center gap-2.5 justify-self-start">${back}${extra}</div>
       <div class="justify-self-center">${status}</div>
-      <div class="flex items-center gap-6 justify-self-end">${aside}${primary}</div>
+      <div class="justify-self-end">${primary}</div>
     </div>
     <div class="flex flex-col gap-1.5 px-4 pt-2 md:hidden">
-      <div class="flex min-h-5 justify-center text-center text-[13px]">${aside || status}</div>
+      <div class="flex min-h-5 justify-center text-center text-[13px]">${status}</div>
       <div class="flex items-center gap-2">
         ${back && html`<div class="shrink-0">${back}</div>`}
         <div class="min-w-0 flex-1 [&>button]:w-full">${primary}</div>
