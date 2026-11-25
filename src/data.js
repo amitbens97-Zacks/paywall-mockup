@@ -36,7 +36,19 @@ export const USER = {
   goal: 12000,
   clientOne: 'זוג אחד',
 };
-export const couplesForGoal = Math.ceil(USER.goal / USER.core.price); // 12,000 / 4,800 = 2.5 → 3
+
+// The summary of step 5 "העסק במספרים" (same rules as that step's mockup: before tax, close rate
+// 20%, lead to call 40%, its defaults). goal = what is left each month after the fixed expenses.
+const FIXED = 2000; // fixed expenses a month
+const CLOSE = 0.2;
+const LEAD_TO_CALL = 0.4;
+const clients = Math.ceil((USER.goal + FIXED) / USER.core.price); // 14,000 / 4,800 → 3 couples
+export const NUMBERS = {
+  fixed: FIXED,
+  clients,
+  leads: Math.ceil(clients / CLOSE / LEAD_TO_CALL), // 15 calls → 38 leads
+  calls: Math.ceil(clients / CLOSE),
+};
 
 // Prices (Amit, 23.11.2026): monthly 350 ₪, yearly shown as 200 ₪ a month (2,400 ₪ a year).
 // 5 free days for every new subscriber (Amit, 23.11: 7 → 5). The accountant add-on keeps today's gap

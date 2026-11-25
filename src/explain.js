@@ -3,7 +3,7 @@
 // what we do here, what you see, why it matters, then "לשאול את הכריש" with ready
 // questions. Every answer rests on the prices and the trial in data.js, nothing else.
 import { html, useState, useRef, useEffect, Icon, cx } from './lib.js';
-import { g, USER, PRICE, TRIAL, TRIAL_DAYS, ACCOUNTANT, yearSaving } from './data.js';
+import { g, USER, NUMBERS, PRICE, TRIAL, TRIAL_DAYS, ACCOUNTANT, yearSaving } from './data.js';
 
 const nf = (n) => n.toLocaleString('he-IL');
 
@@ -11,9 +11,11 @@ export const EXPLAIN = {
   paywall: {
     title: 'הפרקים הבאים',
     what: 'כאן פותחים את פרקים 3 עד 6.',
-    see: `המסלול, המחיר, ומה נפתח בכל פרק. ${TRIAL_DAYS} ימים חינם.`,
-    why: `${USER.clientOne} שסוגר ${USER.core.name.split(' · ')[0]} מכסה יותר משנה של מנוי.`,
+    see: `המספרים שלך, המסלול והמחיר, ומה נפתח בכל פרק. ${TRIAL_DAYS} ימים חינם.`,
+    why: 'הפרקים הבאים נועדו להביא את הפניות והלקוחות מהתוכנית שלך.',
     qa: [
+      ['מאיפה המספרים שלי?', `מהשלב "העסק במספרים", לפני מס. כדי שיישארו לך ${nf(USER.goal)} ₪ בחודש אחרי ${nf(NUMBERS.fixed)} ₪ הוצאות קבועות, צריך ${NUMBERS.clients} זוגות. זה ${NUMBERS.calls} שיחות מכירה, ו-${NUMBERS.leads} פניות.`],
+      ['איך חושב שווי של עסקה אחת?', `המחיר של ${USER.core.name.split(' · ')[0]} אצלך, ${nf(USER.core.price)} ₪ לפני מס, חלקי המחיר של המנוי לחודש. עם רואה חשבון מורידים קודם את ${ACCOUNTANT.setup} ₪ החד-פעמיים.`],
       [`מה קורה אחרי ${TRIAL_DAYS} הימים?`, `ב-${TRIAL.remind} תקבל${g('', 'י')} תזכורת. ב-${TRIAL.charge} מתחיל החיוב לפי המסלול שבחרת. עד אז לא משלמים כלום.`],
       ['איך מבטלים?', 'בקליק, מההגדרות, בכל רגע. ביטול לפני סוף הניסיון: לא משלמים כלום.'],
       ['מה ההבדל בין חודשי לשנתי?', `חודשי: ${PRICE.month.perMonth} ₪ כל חודש. שנתי: ${PRICE.year.perMonth} ₪ לחודש, ${nf(PRICE.year.charge)} ₪ בחיוב אחד. חיסכון של ${nf(yearSaving)} ₪ בשנה.`],
