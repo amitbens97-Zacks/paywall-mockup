@@ -161,15 +161,16 @@ export function Status({ undo, onUndo, reason, save, hint }) {
   return html`<span></span>`;
 }
 
-export function BottomBar({ back, extra, status, primary }) {
+// aside: one strong fact next to the primary (on the phone: above it).
+export function BottomBar({ back, extra, status, aside, primary }) {
   return html`<div class="no-print pb-safe shrink-0 border-t border-line bg-surface">
     <div class="hidden h-20 grid-cols-[1fr_auto_1fr] items-center gap-4 px-7 md:grid">
       <div class="flex items-center gap-2.5 justify-self-start">${back}${extra}</div>
       <div class="justify-self-center">${status}</div>
-      <div class="justify-self-end">${primary}</div>
+      <div class="flex items-center gap-6 justify-self-end">${aside}${primary}</div>
     </div>
     <div class="flex flex-col gap-1.5 px-4 pt-2 md:hidden">
-      <div class="flex min-h-5 justify-center text-center text-[13px]">${status}</div>
+      <div class="flex min-h-5 justify-center text-center text-[13px]">${aside || status}</div>
       <div class="flex items-center gap-2">
         ${back && html`<div class="shrink-0">${back}</div>`}
         <div class="min-w-0 flex-1 [&>button]:w-full">${primary}</div>
@@ -177,6 +178,11 @@ export function BottomBar({ back, extra, status, primary }) {
       ${extra && html`<div class="flex items-center justify-center gap-4">${extra}</div>`}
     </div>
   </div>`;
+}
+
+// "היום 0 ₪": the amount due now, with a pencil line under it.
+export function Today({ amount }) {
+  return html`<p class="flex items-baseline gap-2 whitespace-nowrap text-[17px] font-bold text-ink max-md:pb-2 md:text-[19px]">היום<span class="relative font-display text-[25px] font-black leading-none tabular-nums text-money md:text-[36px]">${amount}<${PencilLine} color="#12805c" class="absolute -bottom-1.5 start-0 h-1.5 w-full md:-bottom-2 md:h-2" /></span></p>`;
 }
 
 // The primary button: label from the button dictionary, arrow after it, ↵ hint on desktop.

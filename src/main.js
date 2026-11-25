@@ -5,7 +5,7 @@
 // Link params: ?screen=paywall|checkout|welcome|home, ?interval=year|month, ?user=m|f, ?embed = phone layout.
 // Shift+D opens the developer notes and the screen list. "?" in the top bar = the shark's explanation.
 import { html, render, useState, useEffect, useRef, Icon, cx, confetti } from './lib.js';
-import { Logo, TopBar, BottomBar, Status, PrimaryButton, Button, Toast, PartnerBubble } from './components.js';
+import { Logo, TopBar, BottomBar, Status, PrimaryButton, Button, Today, Toast, PartnerBubble } from './components.js';
 import { TRIAL_DAYS } from './data.js';
 import { EXPLAIN, ExplainButton, SharkTalk } from './explain.js';
 import { Paywall, Checkout, Welcome, Home } from './screens.js';
@@ -121,7 +121,7 @@ function App({ view: shellView, onViewChange }) {
   const bottom = {
     paywall: html`<${BottomBar}
       back=${html`<${Button} variant="text" onClick=${() => (notify('אפשר לחזור מתי שרוצים. הניסיון מחכה', 'clock'), go('home'))}>לא עכשיו<//>`}
-      status=${html`<${Status} hint=${html`<b class="text-money">היום 0 ₪</b>`} />`}
+      aside=${html`<${Today} amount="0 ₪" />`}
       primary=${html`<${Button} onClick=${startTrial} disabled=${busy}>${busy ? 'מעבירים לתשלום...' : `להתחיל ${TRIAL_DAYS} ימים חינם`}<${Icon} name="arrow-left" size=${20} /><//>`}
     />`,
     checkout: html`<${BottomBar}
