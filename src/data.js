@@ -48,6 +48,11 @@ export const PRICE = {
 };
 export const ACCOUNTANT = { perMonth: 150, setup: 249 };
 export const yearSaving = PRICE.month.perMonth * 12 - PRICE.year.charge; // 4,200 - 2,400 = 1,800
+// What the chosen plan costs a month, and what is paid once (the accountant's setup).
+export const perMonthOf = (plan) => PRICE[plan.interval].perMonth + (plan.accountant ? ACCOUNTANT.perMonth : 0);
+export const onceOf = (plan) => (plan.accountant ? ACCOUNTANT.setup : 0);
+// How many months of the chosen plan one sale of the core product covers.
+export const roiMonths = (plan) => Math.floor((USER.core.price - onceOf(plan)) / perMonthOf(plan)); // 13 monthly, 24 yearly
 export const yearSavingPct = Math.round((yearSaving / (PRICE.month.perMonth * 12)) * 100); // 43
 
 // What opens. Chapters 3-6 of the 15-step journey (journey v14, 03.11.2026).
@@ -92,6 +97,6 @@ export const DEMO_COUPON = 'FLOW100';
 // Messages after "לא עכשיו" (shown in the developer notes and on the home card).
 export const NUDGES = [
   { when: 'למחרת', text: 'הפרקים הבאים מחכים לך. 5 ימים חינם, בלי חיוב היום.' },
-  { when: 'אחרי 3 ימים', text: 'זוג אחד שסוגר תהליך מכסה שנתיים של FlowBiz. פרק 3 מחכה לך.' },
+  { when: 'אחרי 3 ימים', text: 'זוג אחד שסוגר תהליך מכסה יותר משנה של FlowBiz. פרק 3 מחכה לך.' },
   { when: 'אחרי 7 ימים', text: 'התוכנית העסקית שלך מוכנה כבר שבוע. רוצה להמשיך לפרק 3?' },
 ];

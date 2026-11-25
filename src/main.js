@@ -6,7 +6,7 @@
 // Shift+D opens the developer notes and the screen list. "?" in the top bar = the shark's explanation.
 import { html, render, useState, useEffect, useRef, Icon, cx, confetti } from './lib.js';
 import { Logo, TopBar, BottomBar, Status, PrimaryButton, Button, Toast, PartnerBubble } from './components.js';
-import { USER, TRIAL_DAYS, PRICE, g } from './data.js';
+import { TRIAL_DAYS } from './data.js';
 import { EXPLAIN, ExplainButton, SharkTalk } from './explain.js';
 import { Paywall, Checkout, Welcome, Home } from './screens.js';
 import { DevPanel } from './devnotes.js';
@@ -17,16 +17,10 @@ const SCREENS = ['paywall', 'checkout', 'welcome', 'home'];
 const OPEN = { name: 'פתיחת הפרקים הבאים', chapterNo: 3, chapter: 'בניית מותג אישי', icon: 'lock-open' };
 
 const SHARK = {
+  paywall: 'התוכנית מוכנה. מכאן אני ממשיך איתך למותג וללקוחות.',
   checkout: 'היום לא יורד כסף. תזכורת תגיע יום לפני החיוב.',
   welcome: 'הכל פתוח. ממשיכים מאיפה שעצרת, בפרק 3.',
   home: `פרק 3 מחכה לך. ${TRIAL_DAYS} ימים חינם, בלי חיוב היום.`,
-};
-
-// The paywall line follows the billing choice: the core product's price in months of FlowBiz.
-const paywallLine = (interval) => {
-  const months = Math.floor(USER.core.price / PRICE[interval].perMonth);
-  const span = months === 24 ? 'שנתיים' : `${months} חודשים`;
-  return `${USER.clientOne} שסוגר תהליך מכסה ${span} של FlowBiz. מכאן אני ממשיך איתך למותג וללקוחות.`;
 };
 
 function App({ view: shellView, onViewChange }) {
@@ -149,7 +143,7 @@ function App({ view: shellView, onViewChange }) {
       <main class="thin-scroll relative h-full overflow-y-auto">${body}</main>
       <${PartnerBubble}
         key=${screen}
-        message=${screen === 'paywall' ? paywallLine(plan.interval) : SHARK[screen]}
+        message=${SHARK[screen]}
         unread=${unread}
         onRead=${() => setUnread(false)}
         mood=${screen === 'welcome' ? 'happy' : 'calm'}
