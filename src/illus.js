@@ -1,10 +1,9 @@
 // Small pencil drawings for the paywall: the free-days seal, the funnel of "העסק במספרים",
-// the ring around an amount, and tally marks. Same look as the icons: a soft tint, sky-blue
+// and the ring around an amount. Same look as the icons: a soft tint, sky-blue
 // hatching a little off the lines, and an outline with a light grain.
 import { html } from './lib.js';
 
 const INK = '#2d3e66';
-const BLUE = '#0038b8';
 const GREEN = '#12805c';
 
 // The stamp of the free days: a scalloped seal, pressed a little crooked.
@@ -43,21 +42,5 @@ export function FunnelShape({ class: cls = '' }) {
 export function Ring({ color = GREEN, class: cls = '' }) {
   return html`<svg viewBox="0 0 200 64" preserveAspectRatio="none" class=${'overflow-visible ' + cls} aria-hidden="true" style=${{ filter: 'url(#pencil-rough)' }}>
     <path class="pencil-draw" style=${{ animationDuration: '.9s' }} pathLength="1" d="M128 5 C70 -2 8 8 4 32 C1 56 66 62 112 60 C164 58 198 48 196 29 C194 10 138 2 92 6" fill="none" stroke=${color} stroke-width="2.4" stroke-linecap="round" opacity=".75" />
-  </svg>`;
-}
-
-// Tally marks, five to a group (one mark = one month).
-export function Tally({ n, class: cls = '' }) {
-  const groups = [];
-  for (let i = 0; i < n; i += 5) groups.push(Math.min(5, n - i));
-  const W = 32;
-  return html`<svg key=${n} width=${groups.length * W - 8} height="20" viewBox=${`0 0 ${groups.length * W - 8} 20`} class=${'overflow-visible ' + cls} aria-hidden="true" stroke=${BLUE} stroke-width="2.1" stroke-linecap="round" fill="none" style=${{ filter: 'url(#pencil-rough)' }}>
-    ${groups.map((c, gi) => {
-      const x0 = (groups.length - 1 - gi) * W; // right to left
-      return html`<g key=${gi}>
-        ${Array.from({ length: Math.min(4, c) }, (_, i) => html`<path key=${i} d=${`M${x0 + 21.5 - i * 6} ${2 + (i % 2)} L${x0 + 20.5 - i * 6} ${18 - (i % 2)}`} />`)}
-        ${c === 5 && html`<path d=${`M${x0 + 25} 4.5 L${x0 - 1} 15.5`} />`}
-      </g>`;
-    })}
   </svg>`;
 }

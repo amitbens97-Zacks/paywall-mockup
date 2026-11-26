@@ -5,7 +5,7 @@
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
 import { Button, Mark, Note, Panel, SharkAvatar } from './components.js';
-import { FunnelShape, Ring, Seal, Tally } from './illus.js';
+import { FunnelShape, Ring, Seal } from './illus.js';
 import { USER, NUMBERS, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, yearSaving, perMonthOf, onceOf, roiMonths, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
@@ -95,7 +95,7 @@ function Unlocks() {
 }
 
 // The summary of step 5 as a drawn funnel: inquiries, couples, the goal (all per month). Under it, what one
-// deal (the user's core product) is worth, in months of the chosen plan (one tally mark = one month).
+// deal (the user's core product) is worth, in months of the chosen plan.
 function Numbers({ plan }) {
   const m = roiMonths(plan);
   const tiers = [
@@ -115,7 +115,6 @@ function Numbers({ plan }) {
       <p class="text-[17px] font-bold leading-tight">עסקה אחת שווה לך</p>
       <p class="relative mx-auto mt-1 w-fit px-6 py-1.5 font-display text-[36px] font-black leading-none tabular-nums text-money"><${Ring} class="absolute inset-0 h-full w-full" />${money(USER.core.price)}</p>
       <p class="mt-1.5 text-[16px] font-semibold leading-tight">מכסה ${m === 24 ? 'שנתיים' : `${m} חודשים`} של מנוי</p>
-      ${m <= 24 && html`<${Tally} n=${m} class="mx-auto mt-1.5 block" />`}
     </div>
   <//>`;
 }
