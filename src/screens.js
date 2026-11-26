@@ -5,7 +5,7 @@
 //   home     - after "לא עכשיו": chapter 3 waits on the home page
 import { html, useState, Icon, PencilCheck, cx, money } from './lib.js';
 import { Button, Mark, Note, Panel, SharkAvatar } from './components.js';
-import { Drawing, FunnelShape, Ring, Seal, Tally, Trail } from './illus.js';
+import { FunnelShape, Ring, Seal, Tally } from './illus.js';
 import { USER, NUMBERS, PRICE, ACCOUNTANT, ACCOUNTANT_ITEMS, TRIAL, TRIAL_DAYS, UNLOCKS, yearSaving, perMonthOf, onceOf, roiMonths, DEMO_COUPON } from './data.js';
 
 // What is charged on the first charge day, by the user's choice.
@@ -16,7 +16,7 @@ export function chargeOf(plan) {
 }
 
 function Heading({ eyebrow, title, sub, children }) {
-  return html`<div class=${cx('fb-heading mb-4', children && 'relative max-md:pe-[84px]')}>
+  return html`<div class=${cx('fb-heading', children ? 'relative mb-3 max-md:pe-[84px]' : 'mb-4')}>
     <span class="fb-eyebrow">${eyebrow}</span>
     <h1 class=${cx('fb-h1 md:text-[36px]', children ? 'text-[23px]' : 'text-[28px]')}>${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
     ${sub && html`<p>${sub}</p>`}
@@ -31,7 +31,7 @@ function Heading({ eyebrow, title, sub, children }) {
 
 function Billing({ interval, onChange }) {
   return html`<div role="radiogroup" aria-label="תקופת חיוב" class="inline-flex shrink-0 rounded-xl border border-line bg-canvas p-1">
-    ${[['month', 'חודשי'], ['year', 'שנתי']].map(([id, label]) => html`<button key=${id} type="button" role="radio" aria-checked=${interval === id} onClick=${() => onChange(id)} class=${cx('h-9 rounded-[10px] px-4 text-[15px] font-bold cursor-pointer', interval === id ? 'bg-brand-600 text-white shadow-sm' : 'text-muted hover:text-brand-600')}>${label}</button>`)}
+    ${[['month', 'חודשי'], ['year', 'שנתי']].map(([id, label]) => html`<button key=${id} type="button" role="radio" aria-checked=${interval === id} onClick=${() => onChange(id)} class=${cx('h-9 rounded-[10px] px-4 text-[15px] font-bold cursor-pointer', interval === id ? 'bg-[#cfe0fb] text-ink shadow-sm' : 'text-muted hover:text-brand-600')}>${label}</button>`)}
   </div>`;
 }
 
@@ -39,19 +39,20 @@ function PlanCard({ plan, up }) {
   const year = plan.interval === 'year';
   const [details, setDetails] = useState(false);
   return html`<${Panel} class="!p-0 flex flex-col overflow-hidden md:h-full">
-    <div class="px-5 pb-3 pt-4 md:px-6 md:pb-4">
-      <div class="flex flex-wrap items-center justify-between gap-3">
-        <p class="font-display text-[20px] font-extrabold">מנוי FlowBiz</p>
-        <${Billing} interval=${plan.interval} onChange=${(interval) => up({ interval })} />
-      </div>
-      <div class="mt-2 flex flex-wrap items-baseline gap-x-2.5 gap-y-1">
-        <b class="font-display text-[60px] font-black leading-none tabular-nums">${money(perMonthOf(plan))}</b>
-        <span class="text-[18px] font-semibold text-muted">לחודש</span>
-        <span class="text-[14px] text-muted max-md:basis-full md:ms-auto">${year ? html`${money(perMonthOf(plan) * 12)} בחיוב שנתי · <b class="text-money">חיסכון של ${money(yearSaving)}</b>` : 'חיוב חודשי'}</span>
+    <div class="px-5 pb-3 pt-4 md:px-6">
+      <div class="flex flex-wrap items-end justify-between gap-x-4 gap-y-3">
+        <div>
+          <p class="font-display text-[20px] font-extrabold">מנוי FlowBiz</p>
+          <p class="mt-1 flex items-baseline gap-2.5"><b class="font-display text-[54px] font-black leading-none tabular-nums">${money(perMonthOf(plan))}</b><span class="text-[18px] font-semibold text-muted">לחודש</span></p>
+        </div>
+        <div class="flex flex-col gap-2 max-md:w-full md:items-end">
+          <${Billing} interval=${plan.interval} onChange=${(interval) => up({ interval })} />
+          <span class="text-[14px] text-muted max-md:order-first">${year ? html`${money(perMonthOf(plan) * 12)} בחיוב שנתי · <b class="text-money">חיסכון של ${money(yearSaving)}</b>` : 'חיוב חודשי'}</span>
+        </div>
       </div>
     </div>
-    <div class="flex-1 border-t border-line px-5 pb-1.5 pt-2 md:px-6 md:pb-2 md:pt-3"><${Unlocks} /></div>
-    <div class="border-t border-line bg-canvas/60 px-5 py-3 md:px-6">
+    <div class="flex-1 border-t border-line px-5 pb-1.5 pt-2 md:px-6 md:pb-3 md:pt-2.5"><${Unlocks} /></div>
+    <div class="border-t border-line bg-canvas/60 px-5 py-2.5 md:px-6">
       <div class="flex items-center gap-3">
         <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
           <input type="checkbox" checked=${plan.accountant} onChange=${(e) => up({ accountant: e.target.checked })} class="h-5 w-5 shrink-0 cursor-pointer accent-[#0038b8]" />
@@ -67,8 +68,8 @@ function PlanCard({ plan, up }) {
   <//>`;
 }
 
-// What opens: a drawn path of four stations, one outcome per chapter (a list on the phone).
-// A tap on a station shows its steps under the path; one open at a time.
+// What opens: four small icons, one outcome per chapter (a list on the phone).
+// A tap shows the chapter's steps under the row; one open at a time.
 function Steps({ c }) {
   return html`<ul class="grid gap-x-5 gap-y-1 rounded-xl bg-brand-50 px-4 py-2.5 text-[14px] leading-snug md:grid-cols-2">${c.steps.map((x) => html`<li key=${x.name}><b>${x.gets}</b> <span class="text-muted">· ${x.name}</span></li>`)}</ul>`;
 }
@@ -77,23 +78,20 @@ function Unlocks() {
   const [open, setOpen] = useState(null);
   const cur = UNLOCKS.find((c) => c.n === open);
   return html`<p class="text-[14px] font-bold text-muted">מה נפתח</p>
-    <ol class="relative mt-1 grid md:grid-cols-4" aria-label="מה נפתח">
-      ${UNLOCKS.map((c, i) => {
+    <ol class="mt-1.5 grid gap-x-3 md:grid-cols-4" aria-label="מה נפתח">
+      ${UNLOCKS.map((c) => {
         const on = open === c.n;
-        const last = i === UNLOCKS.length - 1;
-        return html`<li key=${c.n} class="relative min-w-0">
-          ${!last && html`<${Trail} down=${i % 2 === 1} class="pointer-events-none absolute top-[30px] end-0 hidden h-5 w-[calc(100%-92px)] translate-x-[-50%] lg:block" />`}
-          ${!last && !on && html`<span class="absolute bottom-0 start-[23px] h-3 translate-y-1/2 border-s-2 border-dotted border-brand-300 md:hidden" aria-hidden="true"></span>`}
-          <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class=${cx('group flex w-full cursor-pointer items-center gap-3 rounded-2xl text-start max-md:h-[46px] md:flex-col md:gap-1 md:px-1.5 md:pb-1 md:pt-1 md:text-center')}>
-            <${Drawing} name=${c.drawing} class="h-[42px] w-[46px] shrink-0 transition-transform group-hover:-rotate-3 group-hover:scale-105 md:h-[72px] md:w-[80px]" />
-            <b class=${cx('min-w-0 flex-1 text-[16px] leading-tight [text-wrap:balance] group-hover:text-brand-600 md:min-h-10', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${14} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform group-hover:text-brand-600 max-md:hidden', on && 'rotate-180')} /></b>
+        return html`<li key=${c.n} class="min-w-0">
+          <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class=${cx('group flex w-full cursor-pointer items-center gap-3 rounded-xl text-start max-md:h-11 md:flex-col md:gap-1.5 md:py-1 md:text-center', on && 'md:bg-brand-50')}>
+            <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
+            <b class=${cx('min-w-0 flex-1 text-[15px] leading-tight [text-wrap:balance] group-hover:text-brand-600', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${13} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform max-md:hidden', on && 'rotate-180')} /></b>
             <${Icon} name="chevron-down" size=${15} class=${cx('shrink-0 text-muted transition-transform md:hidden', on && 'rotate-180')} />
           </button>
           ${on && html`<div class="rise my-1.5 md:hidden"><${Steps} c=${c} /></div>`}
         </li>`;
       })}
     </ol>
-    ${cur && html`<div key=${cur.n} class="rise mt-1 max-md:hidden"><${Steps} c=${cur} /></div>`}`;
+    ${cur && html`<div key=${cur.n} class="rise mt-2 max-md:hidden"><${Steps} c=${cur} /></div>`}`;
 }
 
 // The summary of step 5 as a drawn funnel: inquiries, couples, the goal (all per month). Under it, what one
@@ -105,12 +103,12 @@ function Numbers({ plan }) {
     [NUMBERS.clients, 'זוגות'],
     [money(USER.goal), 'יעד'],
   ];
-  return html`<${Note} tilt=${-0.6} class="!px-6 !pb-4 !pt-8 flex flex-col md:h-full">
+  return html`<${Note} tilt=${-0.6} class="!px-6 !pb-4 !pt-7 flex flex-col md:h-full">
     <p class="flex items-baseline justify-between"><b class="font-display text-[18px] font-extrabold leading-tight">העסק במספרים</b><span class="text-[14px] text-ink-2">בחודש</span></p>
-    <div class="relative mx-auto mt-2 h-[124px] w-full max-w-[280px]">
+    <div class="relative mx-auto mt-2 h-[112px] w-full max-w-[280px]">
       <${FunnelShape} class="absolute inset-0 h-full w-full" />
       <dl class="relative m-0 flex h-full flex-col justify-between py-[3px]">
-        ${tiers.map(([v, k], i) => html`<div key=${k} class=${cx('flex h-9 items-center justify-center gap-1.5', i === 2 && 'text-white')}><dt class=${cx('text-[15px]', i < 2 && 'order-2')}>${k}</dt><dd class="m-0 font-display text-[20px] font-extrabold leading-none tabular-nums">${v}</dd></div>`)}
+        ${tiers.map(([v, k], i) => html`<div key=${k} class="flex h-8 items-center justify-center gap-1.5"><dt class=${cx('text-[15px]', i < 2 && 'order-2')}>${k}</dt><dd class="m-0 font-display text-[20px] font-extrabold leading-none tabular-nums">${v}</dd></div>`)}
       </dl>
     </div>
     <div class="mt-auto pt-3 text-center">
@@ -160,7 +158,7 @@ function Coupon({ onValid }) {
 // One quiet line under the offer: the code on the right, the links on the left.
 function Foot({ onCoupon, notify }) {
   const links = ['תנאי שימוש', 'מדיניות פרטיות', 'הצהרת נגישות'];
-  return html`<footer class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[13px] text-muted max-md:flex-col md:mt-4">
+  return html`<footer class="mt-5 flex flex-wrap items-center justify-between gap-x-6 gap-y-3 text-[13px] text-muted max-md:flex-col md:mt-3">
     <${Coupon} onValid=${onCoupon} />
     <nav class="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
       ${links.map((l) => html`<a key=${l} href="#" class="hover:text-brand-600 hover:underline" onClick=${(e) => (e.preventDefault(), notify(`במערכת: עמוד "${l}"`, 'file-text'))}>${l}</a>`)}
@@ -170,14 +168,14 @@ function Foot({ onCoupon, notify }) {
 }
 
 export function Paywall({ plan, up, onCoupon, notify }) {
-  return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-4 md:pt-5">
-    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, ממשיכים עם `, 'מנוי', '']} sub="ביטול בקליק בכל רגע.">
-      <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -end-1 top-1 h-[84px] w-[84px] -rotate-[8deg] md:end-[262px] md:-top-1 md:h-[100px] md:w-[100px] lg:hidden" />
+  return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-3 md:pt-4">
+    <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, עכשיו זה הזמן `, 'להביא לקוחות', '']} >
+      <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -end-1 top-1 h-[84px] w-[84px] -rotate-[8deg] md:end-2 md:-top-3 md:h-[100px] md:w-[100px] lg:hidden" />
     <//>
     <div class="grid gap-7 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
       <section class="relative min-w-0">
         <${PlanCard} plan=${plan} up=${up} />
-        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -top-[34px] end-[188px] hidden h-[114px] w-[114px] -rotate-[8deg] lg:block" />
+        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute end-[256px] top-[6px] hidden h-[100px] w-[100px] -rotate-[8deg] lg:block" />
       </section>
       <section class="min-w-0"><${Numbers} plan=${plan} /></section>
     </div>

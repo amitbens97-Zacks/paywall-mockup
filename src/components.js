@@ -180,8 +180,8 @@ export function BottomBar({ back, extra, status, primary }) {
 }
 
 // "היום 0 ₪": the amount due now, with a pencil line under it.
-export function Today({ amount }) {
-  return html`<p class="flex items-baseline gap-2 whitespace-nowrap text-[17px] font-bold text-ink max-md:pb-2 md:text-[19px]">היום<span class="relative font-display text-[25px] font-black leading-none tabular-nums text-money md:text-[36px]">${amount}<${PencilLine} color="#12805c" class="absolute -bottom-1.5 start-0 h-1.5 w-full md:-bottom-2 md:h-2" /></span></p>`;
+export function Today({ amount, note }) {
+  return html`<p class="flex items-baseline gap-2 whitespace-nowrap text-[17px] font-bold text-ink max-md:pb-2 md:text-[19px]">היום<span class="relative font-display text-[25px] font-black leading-none tabular-nums text-money md:text-[36px]">${amount}<${PencilLine} color="#12805c" class="absolute -bottom-1.5 start-0 h-1.5 w-full md:-bottom-2 md:h-2" /></span>${note && html`<span class="ms-2 text-[14px] font-semibold text-muted">${note}</span>`}</p>`;
 }
 
 // The primary button: label from the button dictionary, arrow after it, ↵ hint on desktop.

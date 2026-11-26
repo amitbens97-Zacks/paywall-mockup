@@ -87,6 +87,11 @@
         background: #fff; border: 3px solid var(--color-brand-600, #0038b8); box-shadow: 0 2px 6px rgb(45 62 102 / .25); }
       .no-scrollbar::-webkit-scrollbar { display: none; }
 
+      /* The paywall's one action, in pencil yellow (Amit 26.11): the only strong colour on that page. */
+      .fb-btn-primary.fb-btn-pencil { background: #f2c14e; color: #2d3e66; box-shadow: 0 6px 14px -6px rgba(168, 103, 15, .55), inset 0 -2px 0 rgba(168, 103, 15, .25); }
+      .fb-btn-primary.fb-btn-pencil:hover { background: #ecb53a; }
+      .fb-btn-primary.fb-btn-pencil:active { background: #e3a92c; }
+      .fb-btn-primary.fb-btn-pencil[disabled], .fb-btn-primary.fb-btn-pencil.is-off { background: #f3dea6; color: #6b6150; }
       /* Pencil stroke that draws itself (check marks). */
       .pencil-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pencilDraw 0.4s cubic-bezier(0.52, 0.02, 0.38, 1) forwards; }
       @keyframes pencilDraw { to { stroke-dashoffset: 0; } }
