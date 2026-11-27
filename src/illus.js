@@ -4,6 +4,7 @@
 import { html } from './lib.js';
 
 const INK = '#2d3e66';
+const BLUE = '#0038b8';
 const GREEN = '#12805c';
 
 // The stamp of the free days: a scalloped seal, pressed a little crooked.
@@ -14,11 +15,11 @@ export function Seal({ n, class: cls = '' }) {
     return `${(50 + Math.cos(a) * r).toFixed(1)} ${(50 + Math.sin(a) * r).toFixed(1)}`;
   });
   const d = `M${pts.join(' L')} Z`;
-  return html`<svg viewBox="0 0 100 100" class=${'overflow-visible ' + cls} role="img" aria-label=${`${n} ימים חינם`} text-anchor="middle" fill=${INK} font-family="Rubik, Assistant, sans-serif">
+  return html`<svg viewBox="0 0 100 100" class=${'overflow-visible ' + cls} role="img" aria-label=${`${n} ימים חינם`} text-anchor="middle" fill="#ffffff" font-family="Rubik, Assistant, sans-serif">
     <g style=${{ filter: 'url(#pencil-rough)' }}>
-      <path d=${d} fill="#8fb3ef" transform="translate(2 2.6)" opacity=".55" />
-      <path d=${d} fill="#cfe0fb" stroke=${INK} stroke-width="1.6" /><path d=${d} fill="url(#pencil-hatch-lg)" opacity=".5" />
-      <circle cx="50" cy="50" r="39.5" fill="none" stroke=${INK} stroke-width="1.4" stroke-dasharray="3.2 3.6" stroke-linecap="round" opacity=".55" />
+      <path d=${d} fill="#8fb3ef" transform="translate(2 2.6)" opacity=".7" />
+      <path d=${d} fill=${BLUE} /><path d=${d} fill="url(#pencil-hatch-light)" />
+      <circle cx="50" cy="50" r="39.5" fill="none" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3.2 3.6" stroke-linecap="round" opacity=".75" />
     </g>
     <text x="50" y="51" font-size="38" font-weight="900">${n}</text>
     <text x="50" y="67" font-size="14.5" font-weight="800" direction="rtl">ימים חינם</text>
