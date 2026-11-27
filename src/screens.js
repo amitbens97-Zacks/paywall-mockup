@@ -84,11 +84,7 @@ function Unlocks() {
         return html`<li key=${c.n} class="min-w-0">
           <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class=${cx('group flex w-full cursor-pointer items-center gap-3 rounded-xl text-start max-md:h-11 md:flex-col md:gap-1 md:py-1 md:text-center', on && 'md:bg-brand-50')}>
             <span class="fb-chip-ic h-11 w-11 shrink-0"><${Icon} name=${c.icon} size=${22} /></span>
-            <span class="min-w-0 flex-1 md:flex md:flex-col md:items-center">
-              <b class=${cx('block font-display text-[17px] font-extrabold leading-tight tracking-[-0.01em] group-hover:text-brand-600', on && 'text-brand-600')}>${c.gets}</b>
-              <span class="inline-flex items-center gap-0.5 text-[13px] font-semibold text-brand-600 max-md:hidden">${c.steps.length} שלבים<${Icon} name="chevron-down" size=${13} class=${cx('transition-transform', on && 'rotate-180')} /></span>
-            </span>
-            <span class="shrink-0 text-[13px] text-muted md:hidden">${c.steps.length} שלבים</span>
+            <b class=${cx('min-w-0 flex-1 font-display text-[17px] font-extrabold leading-tight tracking-[-0.01em] group-hover:text-brand-600', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${14} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform max-md:hidden', on && 'rotate-180')} /></b>
             <${Icon} name="chevron-down" size=${15} class=${cx('shrink-0 text-muted transition-transform md:hidden', on && 'rotate-180')} />
           </button>
           ${on && html`<div class="rise my-1.5 md:hidden"><${Steps} c=${c} /></div>`}
