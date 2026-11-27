@@ -70,21 +70,21 @@ export const yearSavingPct = Math.round((yearSaving / (PRICE.month.perMonth * 12
 // What opens. Chapters 3-6 of the 15-step journey (journey v14, 03.11.2026).
 // gets: what the user walks away with, per chapter and per step (Amit 23.11: short and sharp).
 export const UNLOCKS = [
-  { n: 3, title: 'בניית מותג אישי', icon: 'palette', gets: 'מותג והצעה', steps: [
+  { n: 3, title: 'בניית מותג אישי', icon: 'gem', gets: 'מותג והצעה', steps: [
     { name: 'שם ולוגו', gets: 'זהות לעסק' },
     { name: 'דף המסרים', gets: 'מה להגיד ללקוח' },
     { name: 'הצעה מנצחת', gets: 'הצעה שקשה לסרב לה' },
     { name: 'דף נחיתה', gets: 'עמוד שמביא פניות' },
   ] },
-  { n: 4, title: 'מביאים לקוחות', icon: 'megaphone', gets: 'לקוחות משלמים', steps: [
+  { n: 4, title: 'מביאים לקוחות', icon: 'hand-coins', gets: 'לקוחות משלמים', steps: [
     { name: 'מכונת תוכן שיווקי', gets: 'פוסטים ופלייר מוכנים' },
     { name: 'לקוחות משלמים', gets: 'פניות שהופכות ללקוחות' },
   ] },
-  { n: 5, title: 'מגדילים מכירות', icon: 'trending-up', gets: 'מגדילים מכירות', steps: [
+  { n: 5, title: 'מגדילים מכירות', icon: 'chart-no-axes-combined', gets: 'מגדילים מכירות', steps: [
     { name: 'חדר התרגול', gets: 'שיחת מכירה בביטחון' },
     { name: 'שירות לקוחות אוטומטי', gets: 'מענה מיידי לכל פנייה' },
   ] },
-  { n: 6, title: 'העסק שתמיד רצית', icon: 'users', gets: 'ביזנס יציב', steps: [
+  { n: 6, title: 'העסק שתמיד רצית', icon: 'building-2', gets: 'ביזנס יציב', steps: [
     { name: 'ניהול לקוחות', gets: 'כל הלקוחות במקום אחד' },
     { name: 'פגישת מיקוד', gets: 'פגישה אישית, עלינו' },
   ] },
