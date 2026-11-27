@@ -16,7 +16,7 @@ export function chargeOf(plan) {
 }
 
 function Heading({ eyebrow, title, sub, children }) {
-  return html`<div class=${cx('fb-heading', children ? 'relative mb-3 max-md:pe-[84px]' : 'mb-4')}>
+  return html`<div class=${cx('fb-heading', children ? 'relative mb-3 max-md:pe-[84px] lg:mb-11' : 'mb-4')}>
     <span class="fb-eyebrow">${eyebrow}</span>
     <h1 class=${cx('fb-h1 md:text-[36px]', children ? 'text-[23px]' : 'text-[28px]')}>${title[0]}<${Mark}>${title[1]}<//>${title[2] || ''}</h1>
     ${sub && html`<p>${sub}</p>`}
@@ -56,13 +56,13 @@ function PlanCard({ plan, up }) {
       <div class="flex items-center gap-3">
         <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">
           <input type="checkbox" checked=${plan.accountant} onChange=${(e) => up({ accountant: e.target.checked })} class="h-5 w-5 shrink-0 cursor-pointer accent-[#0038b8]" />
-          <span class="min-w-0 text-[15px]"><b>להוסיף רואה חשבון</b> <span class="text-muted"><span class="whitespace-nowrap">· ${money(ACCOUNTANT.perMonth)} לחודש</span>${plan.accountant && html` <span class="whitespace-nowrap">ועוד ${money(onceOf(plan))} פעם אחת</span>`}</span></span>
+          <span class="min-w-0 text-[15px]"><b>להוסיף רואה חשבון</b> <span class="text-muted"><span class="whitespace-nowrap">· ${money(ACCOUNTANT.perMonth)} לחודש</span>${plan.accountant && html` <span>ועוד <span class="whitespace-nowrap">${money(onceOf(plan))} חד פעמי</span> לפתיחת התיק ברשויות</span>`}</span></span>
         </label>
         <button type="button" class="shrink-0 text-[13px] font-bold text-brand-600 hover:underline cursor-pointer" onClick=${() => setDetails(!details)} aria-expanded=${details}>פרטים</button>
       </div>
       ${details && html`<ul class="rise mt-2 space-y-1 ps-8 text-[14px]">
         ${ACCOUNTANT_ITEMS.map((t) => html`<li key=${t} class="flex items-center gap-1.5"><${Icon} name="check" size=${14} class="text-brand-600" />${t}</li>`)}
-        ${!plan.accountant && html`<li class="text-muted">ועוד ${money(ACCOUNTANT.setup)} פעם אחת, לפתיחת התיקים ברשויות</li>`}
+        ${!plan.accountant && html`<li class="text-muted">ועוד ${money(ACCOUNTANT.setup)} חד פעמי לפתיחת התיק ברשויות</li>`}
       </ul>`}
     </div>
   <//>`;
@@ -83,8 +83,8 @@ function Unlocks() {
         const on = open === c.n;
         return html`<li key=${c.n} class="min-w-0">
           <button type="button" aria-expanded=${on} onClick=${() => setOpen(on ? null : c.n)} class=${cx('group flex w-full cursor-pointer items-center gap-3 rounded-xl text-start max-md:h-11 md:flex-col md:gap-1.5 md:py-1 md:text-center', on && 'md:bg-brand-50')}>
-            <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
-            <b class=${cx('min-w-0 flex-1 text-[15px] leading-tight [text-wrap:balance] group-hover:text-brand-600', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${13} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform max-md:hidden', on && 'rotate-180')} /></b>
+            <span class="fb-chip-ic h-11 w-11 shrink-0"><${Icon} name=${c.icon} size=${22} /></span>
+            <b class=${cx('min-w-0 flex-1 text-[16px] leading-tight [text-wrap:balance] group-hover:text-brand-600', on && 'text-brand-600')}>${c.gets}<${Icon} name="chevron-down" size=${13} class=${cx('ms-1 inline-block align-[-2px] text-muted transition-transform max-md:hidden', on && 'rotate-180')} /></b>
             <${Icon} name="chevron-down" size=${15} class=${cx('shrink-0 text-muted transition-transform md:hidden', on && 'rotate-180')} />
           </button>
           ${on && html`<div class="rise my-1.5 md:hidden"><${Steps} c=${c} /></div>`}
@@ -167,14 +167,14 @@ function Foot({ onCoupon, notify }) {
 }
 
 export function Paywall({ plan, up, onCoupon, notify }) {
-  return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-3 md:pt-4">
+  return html`<div class="mx-auto max-w-5xl px-4 py-5 max-md:pb-20 md:px-7 md:pb-3 md:pt-2.5">
     <${Heading} eyebrow="התוכנית העסקית מוכנה" title=${[`${USER.name}, עכשיו זה הזמן `, 'להביא לקוחות', '']} >
       <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -end-1 top-1 h-[84px] w-[84px] -rotate-[8deg] md:end-2 md:-top-3 md:h-[100px] md:w-[100px] lg:hidden" />
     <//>
     <div class="grid gap-7 md:grid-cols-[minmax(0,1fr)_300px] md:gap-8">
       <section class="relative min-w-0">
         <${PlanCard} plan=${plan} up=${up} />
-        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute end-[256px] top-[6px] hidden h-[100px] w-[100px] -rotate-[8deg] lg:block" />
+        <${Seal} n=${TRIAL_DAYS} class="pointer-events-none absolute -top-[34px] end-[188px] hidden h-[114px] w-[114px] -rotate-[8deg] lg:block" />
       </section>
       <section class="min-w-0"><${Numbers} plan=${plan} /></section>
     </div>
@@ -196,7 +196,8 @@ export function Checkout({ plan }) {
       <dl class="space-y-1.5 text-[15px]">
         ${rows.map(([k, v], i) => html`<div key=${k} class=${cx('flex items-baseline justify-between gap-3', i === 2 && 'border-t border-line pt-1.5 font-bold')}><dt>${k}</dt><dd class=${cx('tabular-nums', i === 1 && 'font-bold text-money')}>${v}</dd></div>`)}
       </dl>
-      <div class="mt-4 rounded-xl border-2 border-dashed border-brand-200 bg-brand-50/50 px-4 py-6 text-center text-[14px] text-muted">
+      <p class="mt-3 flex items-start rounded-xl bg-brand-50 px-3 py-2.5 gap-2.5 text-[15px] leading-snug"><${Icon} name="rotate-ccw" size=${18} class="mt-0.5 shrink-0 text-brand-600" /><span><b>ביטול בקליק, בכל רגע</b>, בהגדרות תחת "המנוי שלי". ביטול לפני ${TRIAL.charge}: לא יורד שקל.</span></p>
+      <div class="mt-3 rounded-xl border-2 border-dashed border-brand-200 bg-brand-50/50 px-4 py-6 text-center text-[14px] text-muted">
         <${Icon} name="shield-check" size=${26} class="mx-auto mb-1.5 text-brand-600" />
         כאן נפתח עמוד התשלום של חברת הסליקה.<br />במוקאפ אין שדות כרטיס.
       </div>
@@ -211,7 +212,7 @@ function OpenChapters() {
   return html`<ul class="grid gap-2 sm:grid-cols-2">
     ${UNLOCKS.map((c, i) => html`<li key=${c.n} class="rise flex items-center gap-3 rounded-2xl border-[1.5px] border-brand-300 bg-white px-4 py-3" style=${{ animationDelay: `${i * 80}ms` }}>
       <span class="fb-chip-ic h-9 w-9 shrink-0"><${Icon} name=${c.icon} size=${18} /></span>
-      <span class="min-w-0 flex-1"><b class="block text-[16px]">${c.title}</b><span class="text-[13px] font-semibold text-brand-700">${c.gets}</span></span>
+      <span class="min-w-0 flex-1"><b class="block text-[16px]">${c.title}</b><span class="text-[13px] font-semibold text-brand-700">${c.steps.map((s) => s.name).join(' · ')}</span></span>
       <${PencilCheck} size=${20} color="#0038b8" delay=${i * 80} />
     </li>`)}
   </ul>`;

@@ -87,11 +87,12 @@
         background: #fff; border: 3px solid var(--color-brand-600, #0038b8); box-shadow: 0 2px 6px rgb(45 62 102 / .25); }
       .no-scrollbar::-webkit-scrollbar { display: none; }
 
-      /* The paywall's one action, in pencil yellow (Amit 26.11) with black, heavier text (27.11). */
-      .fb-btn-primary.fb-btn-pencil { background: #f2c14e; color: #111111; font-size: 18px; font-weight: 800; letter-spacing: .1px; box-shadow: 0 6px 14px -6px rgba(168, 103, 15, .55), inset 0 -2px 0 rgba(168, 103, 15, .25); }
-      .fb-btn-primary.fb-btn-pencil:hover { background: #ecb53a; }
-      .fb-btn-primary.fb-btn-pencil:active { background: #e3a92c; }
-      .fb-btn-primary.fb-btn-pencil[disabled], .fb-btn-primary.fb-btn-pencil.is-off { background: #f3dea6; color: #6b6150; }
+      /* The paywall's one action, in pencil yellow (Amit 26.11) with black, heavier text (27.11):
+         bigger than any other button, with a pressed-key edge so it reads as the thing to click. */
+      .fb-btn-primary.fb-btn-pencil { height: 58px; padding: 0 32px; border-radius: 16px; background: #f5c445; color: #111111; font-size: 19px; font-weight: 800; letter-spacing: .1px; border: 2px solid #1d2433; box-shadow: 0 4px 0 #1d2433, 0 12px 22px -10px rgba(120, 80, 10, .55); transition: transform .12s, box-shadow .12s, background .12s; }
+      .fb-btn-primary.fb-btn-pencil:hover { background: #f0b92f; transform: translateY(-1px); box-shadow: 0 5px 0 #1d2433, 0 14px 24px -10px rgba(120, 80, 10, .6); }
+      .fb-btn-primary.fb-btn-pencil:active { background: #e8ad22; transform: translateY(3px); box-shadow: 0 1px 0 #1d2433, 0 6px 12px -8px rgba(120, 80, 10, .5); }
+      .fb-btn-primary.fb-btn-pencil[disabled], .fb-btn-primary.fb-btn-pencil.is-off { background: #f3dea6; color: #6b6150; border-color: #b9ae96; box-shadow: 0 2px 0 #b9ae96; transform: none; }
       /* Pencil stroke that draws itself (check marks). */
       .pencil-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: pencilDraw 0.4s cubic-bezier(0.52, 0.02, 0.38, 1) forwards; }
       @keyframes pencilDraw { to { stroke-dashoffset: 0; } }
